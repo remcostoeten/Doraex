@@ -10,8 +10,8 @@ function createApp() {
   // Enable CORS for development
   app.use('*', cors())
 
-  // Serve static files from public directory (for frontend)
-  app.use('/*', serveStatic({ root: './public' }))
+  // Serve static files from frontend build directory
+  app.use('/*', serveStatic({ root: './frontend/dist' }));
 
   return app
 }
@@ -25,7 +25,7 @@ function setupApplication() {
   app.route('/api', api)
 
   // Fallback to serve index.html for SPA routing
-  app.get('*', serveStatic({ path: './public/index.html' }))
+  app.get('*', serveStatic({ path: './frontend/dist/index.html' }))
 
   return app
 }

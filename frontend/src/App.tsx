@@ -1,18 +1,11 @@
-import React from 'react';
+import './index.css';
+import DatabaseViewer from './components/DatabaseViewer';
 import HelpWidget from './components/HelpWidget';
 import DocumentationWidget from './components/DocumentationWidget';
 
-type TProps = {
-  // Add props here when needed
-}
-
-function App(props: TProps) {
+function App() {
   return (
-    <div>
-      <DocumentationWidget />
-      <HelpWidget />
-    </div>
-  );
+  <></>);
 }
 
 export default App;

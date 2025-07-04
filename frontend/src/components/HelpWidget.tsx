@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styles from './HelpWidget.module.css';
+import { useState, useEffect, useRef } from 'react';
 
 type TFileItem = {
   title: string;
@@ -9,16 +8,12 @@ type TFileItem = {
   link?: string;
 };
 
-type TProps = {
-  // Add props here when needed
-};
-
 const PROJECT_FILES: TFileItem[] = [
   {
     title: 'HelpWidget Component',
     type: 'frontend',
     path: 'frontend/src/components/HelpWidget.tsx',
-    detail: 'This interactive help widget component. Built with React, TypeScript, and CSS modules. Features hover tooltips and sliding detail panels with accessibility support.',
+    detail: 'This interactive help widget component. Built with React, TypeScript, and Tailwind CSS. Features hover tooltips and sliding detail panels with accessibility support.',
     link: '/frontend/src/components/HelpWidget.tsx'
   },
   {
@@ -46,40 +41,33 @@ const PROJECT_FILES: TFileItem[] = [
     title: 'Connections API',
     type: 'api',
     path: '/api/connections',
-    detail: 'GET: List all database connections\nPOST: Create new connection (SQLite/PostgreSQL)\nSupports both URL and field-based PostgreSQL connections',
+    detail: 'GET: List all database connections\\nPOST: Create new connection (SQLite/PostgreSQL)\\nSupports both URL and field-based PostgreSQL connections',
     link: '/api/connections'
   },
   {
     title: 'Connection Test API',
     type: 'api',
     path: '/api/connections/test',
-    detail: 'POST: Test database connection without saving\nValidates SQLite paths and PostgreSQL URLs/credentials\nReturns success status and error messages',
+    detail: 'POST: Test database connection without saving\\nValidates SQLite paths and PostgreSQL URLs/credentials\\nReturns success status and error messages',
     link: '/api/connections/test'
   },
   {
     title: 'Query Execution API',
     type: 'api',
     path: '/api/connections/:id/query',
-    detail: 'POST: Execute SQL queries on specific connection\nSupports SELECT, INSERT, UPDATE, DELETE operations\nReturns results with execution metadata',
+    detail: 'POST: Execute SQL queries on specific connection\\nSupports SELECT, INSERT, UPDATE, DELETE operations\\nReturns results with execution metadata',
     link: '/api/connections/:id/query'
   },
   {
     title: 'Tables Browser API',
     type: 'api',
     path: '/api/connections/:id/tables',
-    detail: 'GET: List all tables in database\nReturns table names for both SQLite and PostgreSQL\nFilters system tables automatically',
+    detail: 'GET: List all tables in database\\nReturns table names for both SQLite and PostgreSQL\\nFilters system tables automatically',
     link: '/api/connections/:id/tables'
-  },
-  {
-    title: 'Widget Styles',
-    type: 'frontend',
-    path: 'frontend/src/components/HelpWidget.module.css',
-    detail: 'CSS modules with advanced animations and responsive design. Features custom scrollbars, smooth transitions, and accessibility-focused styling.',
-    link: '/frontend/src/components/HelpWidget.module.css'
   }
 ];
 
-function HelpWidget(props: TProps) {
+function HelpWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
   const [isDetailVisible, setIsDetailVisible] = useState(false);
@@ -88,7 +76,6 @@ function HelpWidget(props: TProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const firstFocusableRef = useRef<HTMLButtonElement>(null);
-  const lastFocusableRef = useRef<HTMLButtonElement>(null);
 
   // Handle Escape key to close widget or detail panel
   useEffect(() => {
@@ -189,19 +176,19 @@ function HelpWidget(props: TProps) {
     switch (type) {
       case 'frontend':
         return (
-          <svg viewBox="0 0 24 24" width="14" height="14" className={styles.typeIcon}>
+          <svg viewBox="0 0 24 24" width="14" height="14" className="flex-shrink-0">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#3b82f6"/>
           </svg>
         );
       case 'backend':
         return (
-          <svg viewBox="0 0 24 24" width="14" height="14" className={styles.typeIcon}>
+          <svg viewBox="0 0 24 24" width="14" height="14" className="flex-shrink-0">
             <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" fill="#10b981"/>
           </svg>
         );
       case 'api':
         return (
-          <svg viewBox="0 0 24 24" width="14" height="14" className={styles.typeIcon}>
+          <svg viewBox="0 0 24 24" width="14" height="14" className="flex-shrink-0">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 5-5 1.41 1.41L7.83 12l3.58 3.59L10 17zm4 0l-1.41-1.41L16.17 12l-3.58-3.59L14 7l5 5-5 5z" fill="#f59e0b"/>
           </svg>
         );
@@ -221,22 +208,26 @@ function HelpWidget(props: TProps) {
   }
 
   return (
-    <div className={styles.helpWidget}>
+    <div className="fixed bottom-5 right-5 z-50 font-sans">
       <button 
         ref={triggerRef}
         onClick={handleToggle}
-        className={styles.helpButton}
+        className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full border-none text-white cursor-pointer flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         aria-label={isOpen ? 'Close project browser' : 'Open project browser'}
       >
-        <svg viewBox="0 0 24 24" width="20" height="20">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
         </svg>
       </button>
       
       <div 
-        className={`${styles.helpCard} ${isOpen ? styles['help--open'] : ''}`}
+        className={`absolute bottom-0 right-0 w-96 max-w-[90vw] h-[500px] bg-white rounded-xl shadow-2xl border border-gray-200 transition-all duration-300 transform-gpu origin-bottom-right overflow-hidden ${
+          isOpen 
+            ? 'opacity-100 scale-100 pointer-events-auto' 
+            : 'opacity-0 scale-95 pointer-events-none'
+        }`}
         role={isOpen ? 'dialog' : undefined}
         aria-modal={isOpen ? 'true' : undefined}
         aria-labelledby="help-title"
@@ -244,19 +235,19 @@ function HelpWidget(props: TProps) {
       >
         {isOpen && (
           <>
-            <div className={styles.helpCardHeader}>
+            <div className="p-5 pb-4 flex justify-between items-center border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
               <div>
-                <h2 id="help-title" className={styles.helpCardTitle}>
+                <h2 id="help-title" className="text-lg font-semibold text-gray-900 m-0">
                   Project Files & APIs
                 </h2>
-                <p className={styles.helpCardSubtitle}>
+                <p className="text-sm text-gray-600 m-0 mt-1">
                   Browse frontend code, backend endpoints, and API documentation
                 </p>
               </div>
               <button 
                 ref={firstFocusableRef}
                 onClick={handleClose}
-                className={styles.closeButton}
+                className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded transition-colors duration-200"
                 aria-label="Close help dialog"
               >
                 <svg viewBox="0 0 24 24" width="16" height="16">
@@ -265,53 +256,69 @@ function HelpWidget(props: TProps) {
               </button>
             </div>
             
-            <div className={styles.helpCardContent}>
-              <div className={`${styles.helpMainPanel} ${isDetailVisible ? styles.shifted : ''}`}>
-                <div className={styles.filterTabs}>
+            <div className="relative h-[calc(100%-81px)] overflow-hidden">
+              <div className={`h-full flex flex-col transition-transform duration-300 ${isDetailVisible ? '-translate-x-full' : 'translate-x-0'}`}>
+                <div className="flex p-4 pb-0 gap-1 border-b border-gray-200">
                   <button
                     onClick={() => handleFilterChange('all')}
-                    className={`${styles.filterTab} ${filter === 'all' ? styles.active : ''}`}
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                      filter === 'all' 
+                        ? 'bg-indigo-500 text-white' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
                   >
                     All
                   </button>
                   <button
                     onClick={() => handleFilterChange('frontend')}
-                    className={`${styles.filterTab} ${filter === 'frontend' ? styles.active : ''}`}
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                      filter === 'frontend' 
+                        ? 'bg-indigo-500 text-white' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
                   >
                     Frontend
                   </button>
                   <button
                     onClick={() => handleFilterChange('backend')}
-                    className={`${styles.filterTab} ${filter === 'backend' ? styles.active : ''}`}
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                      filter === 'backend' 
+                        ? 'bg-indigo-500 text-white' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
                   >
                     Backend
                   </button>
                   <button
                     onClick={() => handleFilterChange('api')}
-                    className={`${styles.filterTab} ${filter === 'api' ? styles.active : ''}`}
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                      filter === 'api' 
+                        ? 'bg-indigo-500 text-white' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
                   >
                     API
                   </button>
                 </div>
-                <ul className={styles.helpList} role="list">
-                  {getFilteredFiles().map((file, index) => {
+                <ul className="flex-1 overflow-y-auto p-5 m-0 list-none" role="list">
+                  {getFilteredFiles().map((file) => {
                     const originalIndex = PROJECT_FILES.findIndex(f => f === file);
                     return (
-                      <li key={originalIndex} className={styles.helpListItem}>
+                      <li key={originalIndex} className="mb-2">
                         <button
                           onClick={() => handleItemClick(originalIndex)}
-                          className={styles.helpListLabel}
+                          className="w-full p-3 border border-gray-200 rounded-lg bg-white hover:border-indigo-300 hover:bg-gray-50 transition-colors duration-200 flex items-center justify-between text-left"
                           aria-expanded={false}
                           title={file.path}
                         >
-                          <div className={styles.fileInfo}>
-                            <div className={styles.fileHeader}>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
                               {getTypeIcon(file.type)}
-                              <span className={styles.fileTitle}>{file.title}</span>
+                              <span className="font-medium text-gray-900 text-sm">{file.title}</span>
                             </div>
-                            <span className={styles.filePath}>{file.path}</span>
+                            <span className="text-xs text-gray-500 font-mono">{file.path}</span>
                           </div>
-                          <svg className={styles.chevronIcon} viewBox="0 0 24 24" width="16" height="16">
+                          <svg className="text-gray-400 flex-shrink-0" viewBox="0 0 24 24" width="16" height="16">
                             <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
                           </svg>
                         </button>
@@ -322,42 +329,44 @@ function HelpWidget(props: TProps) {
               </div>
               
               {selectedItem !== null && (
-                <div className={`${styles.helpSidePanel} ${isDetailVisible ? styles['detail--visible'] : ''}`}>
-                  <div className={styles.sidePanelHeader}>
+                <div className={`absolute top-0 left-0 w-full h-full bg-white transition-transform duration-300 flex flex-col ${
+                  isDetailVisible ? 'translate-x-0' : 'translate-x-full'
+                }`}>
+                  <div className="flex items-start p-5 pb-4 border-b border-gray-200">
                     <button
                       onClick={handleBackToMain}
-                      className={styles.backButton}
+                      className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded transition-colors duration-200 mr-3 mt-0.5"
                       aria-label="Back to file list"
                     >
                       <svg viewBox="0 0 24 24" width="16" height="16">
                         <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
                       </svg>
                     </button>
-                    <div className={styles.sidePanelTitleGroup}>
-                      <div className={styles.sidePanelTitleRow}>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
                         {getTypeIcon(PROJECT_FILES[selectedItem].type)}
-                        <h3 className={styles.sidePanelTitle}>
+                        <h3 className="text-base font-semibold text-gray-900 m-0">
                           {PROJECT_FILES[selectedItem].title}
                         </h3>
                       </div>
-                      <code className={styles.sidePanelPath}>
+                      <code className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded font-mono">
                         {PROJECT_FILES[selectedItem].path}
                       </code>
                     </div>
                   </div>
-                  <div className={styles.sidePanelContent}>
+                  <div className="flex-1 overflow-y-auto p-5">
                     <div 
-                      className={styles.detailContent}
+                      className="text-sm leading-relaxed text-gray-700"
                       dangerouslySetInnerHTML={{
                         __html: renderDetail(PROJECT_FILES[selectedItem].detail)
                       }}
                     />
                     {PROJECT_FILES[selectedItem].link && (
-                      <div className={styles.linkSection}>
-                        <h4>Access Link</h4>
+                      <div className="mt-6 pt-4 border-t border-gray-200">
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Access Link</h4>
                         <a 
                           href={PROJECT_FILES[selectedItem].link}
-                          className={styles.fileLink}
+                          className="inline-flex items-center gap-2 text-indigo-600 text-sm font-medium px-3 py-2 border border-indigo-300 rounded-md hover:bg-indigo-50 hover:border-indigo-400 transition-colors duration-200"
                           target={PROJECT_FILES[selectedItem].type === 'api' ? '_blank' : '_self'}
                           rel={PROJECT_FILES[selectedItem].type === 'api' ? 'noopener noreferrer' : undefined}
                         >

@@ -1,12 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 type THelpContent = {
   title: string;
   content: string;
-};
-
-type TProps = {
-  // Add props here when needed
 };
 
 const helpContent: Record<string, THelpContent> = {
@@ -124,7 +120,7 @@ const helpContent: Record<string, THelpContent> = {
   }
 };
 
-function DocumentationWidget(props: TProps) {
+function DocumentationWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [isSidePanelVisible, setIsSidePanelVisible] = useState(false);
