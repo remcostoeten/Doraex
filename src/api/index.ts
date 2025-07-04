@@ -13,6 +13,14 @@ import {
   updateTodoHandler,
   deleteTodoHandler
 } from './todoHandlers'
+import {
+  registerHandler,
+  loginHandler,
+  logoutHandler,
+  profileHandler,
+  updateProfileHandler
+} from './authHandlers'
+import { requireAuth } from '../middleware/auth'
 
 function createApi() {
   const api = new Hono()
@@ -31,6 +39,15 @@ function createApi() {
   api.put('/todos/:id', updateTodoHandler)
   api.delete('/todos/:id', deleteTodoHandler)
   
+// Auth routes
+  api.post('/auth/register', registerHandler)
+  api.post('/auth/login', loginHandler)
+  api.post('/auth/logout', logoutHandler)
+
+  // Protected routes
+  api.get('/auth/profile', requireAuth, profileHandler)
+  api.put('/auth/profile', requireAuth, updateProfileHandler)
+
   return api
 }
 
