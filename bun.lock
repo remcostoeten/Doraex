@@ -5,7 +5,7 @@
       "name": "database-viewer",
       "dependencies": {
         "anywhere": "^1.6.0",
-        "better-sqlite3": "^11.0.0",
+        "better-sqlite3": "^12.2.0",
         "dont": "^0.0.1",
         "e": "^0.2.33",
         "hono": "^4.6.0",
@@ -62,7 +62,7 @@
 
     "bean": ["bean@1.0.15", "", {}, "sha512-/X7mF8caOC3qZYSJu62wEJ7AO5/ZIKwwvjBFded5s8IDdRLJSAXfYLJaNPIa/ALThJIWtqtJbbfGbGOjISX1bw=="],
 
-    "better-sqlite3": ["better-sqlite3@11.10.0", "", { "dependencies": { "bindings": "^1.5.0", "prebuild-install": "^7.1.1" } }, "sha512-EwhOpyXiOEL/lKzHz9AW1msWFNzGc/z+LzeB3/jnFJpxu+th2yqvzsSWas1v9jgs9+xiXJcD5A8CJxAG2TaghQ=="],
+    "better-sqlite3": ["better-sqlite3@12.2.0", "", { "dependencies": { "bindings": "^1.5.0", "prebuild-install": "^7.1.1" } }, "sha512-eGbYq2CT+tos1fBwLQ/tkBt9J5M3JEHjku4hbvQUePCckkvVf14xWj+1m7dGoK81M/fOjFT7yM9UMeKT/+vFLQ=="],
 
     "bindings": ["bindings@1.5.0", "", { "dependencies": { "file-uri-to-path": "1.0.0" } }, "sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ=="],
 

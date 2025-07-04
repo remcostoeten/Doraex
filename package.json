@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "anywhere": "^1.6.0",
-    "better-sqlite3": "^11.0.0",
+    "better-sqlite3": "^12.2.0",
     "dont": "^0.0.1",
     "e": "^0.2.33",
     "hono": "^4.6.0",
