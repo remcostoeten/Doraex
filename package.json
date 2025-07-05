@@ -6,25 +6,18 @@
   "scripts": {
     "dev": "bun run --hot src/server.ts",
     "dev:all": "concurrently \"bun run dev\" \"cd frontend-svelte && npm run dev\"",
-    "mock": "bun run --hot mock-server.ts",
     "build": "bun build src/server.ts --outdir=dist",
     "start": "bun run dist/server.js",
     "build:frontend": "cd frontend-svelte && npm run build",
     "dev:frontend": "cd frontend-svelte && npm run dev"
   },
   "dependencies": {
-    "anywhere": "^1.6.0",
     "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
-    "dont": "^0.0.1",
-    "e": "^0.2.33",
     "hono": "^4.6.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
-    "playwright": "^1.53.2",
-    "see": "^0.0.0",
-    "th": "^0.1.1",
-    "widget": "^0.0.2"
+    "zod": "^3.25.74"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",

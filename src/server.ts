@@ -3,13 +3,17 @@ import { serveStatic } from 'hono/bun'
 import { cors } from 'hono/cors'
 import { createApi } from './api'
 import { setupDefaultConnection } from './setup'
+import { env } from './config/env'
 
 // Create the application
 function createApp() {
   const app = new Hono()
 
-  // Enable CORS for development
-  app.use('*', cors())
+  // Enable CORS with environment configuration
+  app.use('*', cors({
+    origin: env.CORS_ORIGIN,
+    credentials: env.CORS_CREDENTIALS
+  }))
 
   // Serve static files from frontend build directory
   app.use('/*', serveStatic({ root: './frontend/dist' }));
@@ -37,6 +41,6 @@ async function setupApplication() {
 const app = await setupApplication()
 
 export default {
-  port: 3002,
+  port: env.PORT,
   fetch: app.fetch,
 }

@@ -1,53 +1,30 @@
 import { Hono } from 'hono'
-import { 
-  getAllConnections, 
-  testConnectionHandler, 
-  createConnectionHandler, 
-  executeQueryHandler, 
-  getTablesHandler 
+import {
+  getAllConnections,
+  testConnectionHandler,
+  createConnectionHandler,
+  executeQueryHandler,
+  getTablesHandler
 } from './handlers'
-import {
-  createTodoHandler,
-  getAllTodosHandler,
-  getTodoHandler,
-  updateTodoHandler,
-  deleteTodoHandler
-} from './todoHandlers'
-import {
-  registerHandler,
-  loginHandler,
-  logoutHandler,
-  profileHandler,
-  updateProfileHandler
-} from './authHandlers'
-import { requireAuth } from '../middleware/auth'
+import { createAuthApi } from './auth'
+import { requireAuth, optionalAuth } from '../auth/auth-middleware'
 
 function createApi() {
   const api = new Hono()
   
-  // Database connection routes
-  api.get('/connections', getAllConnections)
-  api.post('/connections/test', testConnectionHandler)
-  api.post('/connections', createConnectionHandler)
-  api.post('/connections/:id/query', executeQueryHandler)
-  api.get('/connections/:id/tables', getTablesHandler)
+  // Authentication routes (public)
+  const authApi = createAuthApi()
+  api.route('/auth', authApi)
   
-  // Todo routes
-  api.post('/todos', createTodoHandler)
-  api.get('/todos', getAllTodosHandler)
-  api.get('/todos/:id', getTodoHandler)
-  api.put('/todos/:id', updateTodoHandler)
-  api.delete('/todos/:id', deleteTodoHandler)
+  // Test connection route (public - for initial setup)
+  api.post('/test-connection', testConnectionHandler)
   
-// Auth routes
-  api.post('/auth/register', registerHandler)
-  api.post('/auth/login', loginHandler)
-  api.post('/auth/logout', logoutHandler)
-
-  // Protected routes
-  api.get('/auth/profile', requireAuth, profileHandler)
-  api.put('/auth/profile', requireAuth, updateProfileHandler)
-
+  // Protected database connection routes
+  api.get('/connections', requireAuth, getAllConnections)
+  api.post('/connections', requireAuth, createConnectionHandler)
+  api.post('/connections/:id/query', requireAuth, executeQueryHandler)
+  api.get('/connections/:id/tables', requireAuth, getTablesHandler)
+  
   return api
 }
 

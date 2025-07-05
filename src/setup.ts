@@ -1,12 +1,14 @@
 import { createConnection, executeQuery, loadSavedConnections } from './db';
+import { env } from './config/env';
+import bcrypt from 'bcryptjs';
 
 // Initialize default SQLite connection and create sample tables
 export async function setupDefaultConnection() {
   try {
-    const connectionId = 'sample-db';
+    const connectionId = env.DEFAULT_CONNECTION_ID;
     const config = {
       sqlite: {
-        path: './sample.db'
+        path: env.SQLITE_PATH
       }
     };
     
@@ -16,6 +18,10 @@ export async function setupDefaultConnection() {
     // Create sample tables if they don't exist
     await createSampleTables(connectionId);
     console.log('✅ Sample tables created/verified');
+    
+    // Create default admin user if not exists
+    await createDefaultAdmin(connectionId);
+    console.log('✅ Default admin user verified');
     
     // Load any previously saved connections
     await loadSavedConnections();
@@ -28,6 +34,18 @@ export async function setupDefaultConnection() {
 
 async function createSampleTables(connectionId: string) {
   const createTablesSQL = [
+    // Users table for authentication
+    `CREATE TABLE IF NOT EXISTS auth_users (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      role TEXT DEFAULT 'user' CHECK (role IN ('user', 'admin')),
+      is_active BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    
     // Connections table to store database connections
     `CREATE TABLE IF NOT EXISTS connections (
       id TEXT PRIMARY KEY,
@@ -119,5 +137,30 @@ async function createSampleTables(connectionId: string) {
   } catch (error) {
     console.error('Failed to create sample tables:', error);
     // Don't throw - let the app continue even if sample data fails
+  }
+}
+
+async function createDefaultAdmin(connectionId: string) {
+  try {
+    // Check if admin user already exists
+    const existingAdmin = await executeQuery(connectionId, 
+      "SELECT * FROM auth_users WHERE email = 'admin@example.com'"
+    );
+    
+    if (existingAdmin.length === 0) {
+      const adminPassword = await bcrypt.hash('admin123', 12);
+      const adminId = `admin_${Date.now()}`;
+      const now = new Date().toISOString();
+      
+      await executeQuery(connectionId, `
+        INSERT INTO auth_users (id, name, email, password_hash, role, created_at, updated_at)
+        VALUES ('${adminId}', 'Admin User', 'admin@example.com', '${adminPassword}', 'admin', '${now}', '${now}')
+      `);
+      
+      console.log("✅ Default admin created: admin@example.com / admin123");
+    }
+  } catch (error) {
+    console.error('Failed to create default admin:', error);
+    // Don't throw - let the app continue
   }
 }

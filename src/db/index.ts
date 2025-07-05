@@ -3,8 +3,10 @@ import * as sqlite from './sqlite'
 import * as postgres from './postgres'
 import { parsePostgresUrl } from '../utils/parsers'
 
+import { env } from '../config/env';
+
 const connections = new Map<string, TConnection>()
-const SYSTEM_CONNECTION_ID = 'sample-db' // Our SQLite system database
+const SYSTEM_CONNECTION_ID = env.DEFAULT_CONNECTION_ID
 
 // Load saved connections on startup
 export async function loadSavedConnections() {
