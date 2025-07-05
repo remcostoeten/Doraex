@@ -42,10 +42,10 @@
   }
 </script>
 
-<div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+<div class="max-w-md mx-auto bg-light-primary dark:bg-dark-secondary rounded-lg shadow-md p-6 border border-light-primary dark:border-dark-primary">
   <div class="mb-6">
-    <h2 class="text-2xl font-bold text-gray-900 text-center">Sign In</h2>
-    <p class="mt-2 text-sm text-gray-600 text-center">
+    <h2 class="text-2xl font-bold text-light-primary dark:text-dark-primary text-center">Sign In</h2>
+    <p class="mt-2 text-sm text-light-secondary dark:text-dark-secondary text-center">
       Welcome back! Please sign in to your account.
     </p>
   </div>
@@ -71,7 +71,7 @@
 
   <form on:submit|preventDefault={handleSubmit} class="space-y-4">
     <div>
-      <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+      <label for="email" class="block text-sm font-medium text-light-primary dark:text-dark-primary mb-1">
         Email Address
       </label>
       <input
@@ -79,7 +79,7 @@
         type="email"
         bind:value={credentials.email}
         on:input={clearErrors}
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {formErrors.email ? 'border-red-500' : ''}"
+        class="w-full px-3 py-2 border border-light-primary dark:border-dark-primary bg-light-primary dark:bg-dark-tertiary text-light-primary dark:text-dark-primary rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {formErrors.email ? 'border-red-500' : ''}"
         placeholder="Enter your email"
         required
         autocomplete="email"
@@ -90,7 +90,7 @@
     </div>
 
     <div>
-      <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+      <label for="password" class="block text-sm font-medium text-light-primary dark:text-dark-primary mb-1">
         Password
       </label>
       <div class="relative">
@@ -99,7 +99,7 @@
           type={showPassword ? 'text' : 'password'}
           bind:value={credentials.password}
           on:input={clearErrors}
-          class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {formErrors.password ? 'border-red-500' : ''}"
+          class="w-full px-3 py-2 pr-10 border border-light-primary dark:border-dark-primary bg-light-primary dark:bg-dark-tertiary text-light-primary dark:text-dark-primary rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {formErrors.password ? 'border-red-500' : ''}"
           placeholder="Enter your password"
           required
           autocomplete="current-password"
@@ -107,7 +107,7 @@
         <button
           type="button"
           on:click={() => showPassword = !showPassword}
-          class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-light-tertiary dark:text-dark-tertiary hover:text-light-secondary dark:hover:text-dark-secondary"
         >
           {#if showPassword}
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,11 +129,11 @@
     <div class="flex items-center justify-between">
       <label class="flex items-center">
         <input type="checkbox" class="mr-2 rounded">
-        <span class="text-sm text-gray-600">Remember me</span>
+        <span class="text-sm text-light-secondary dark:text-dark-secondary">Remember me</span>
       </label>
       <button
         type="button"
-        class="text-sm text-blue-600 hover:text-blue-500"
+        class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
       >
         Forgot password?
       </button>
@@ -142,7 +142,7 @@
     <button
       type="submit"
       disabled={authState.isLoading}
-      class="w-full px-4 py-2 text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+      class="w-full px-4 py-2 text-white bg-blue-600 dark:bg-blue-500 border border-transparent rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
     >
       {#if authState.isLoading}
         <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">

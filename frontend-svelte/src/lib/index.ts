@@ -3,3 +3,4 @@ export * from './types';
 export { createCRUDFactory } from './crud-factory';
 export { AuthenticatedHttpClient, createAuthenticatedCRUDFactory } from './auth-http-client';
 export { authStore } from './stores/auth';
+export { themeStore } from './stores/theme';

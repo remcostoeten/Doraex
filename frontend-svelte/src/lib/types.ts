@@ -146,6 +146,15 @@ export type TPasswordResetConfirm = {
   confirmPassword: string;
 }
 
+// Theme Types
+export type TTheme = 'dark' | 'light';
+
+export type TThemeState = {
+  theme: TTheme;
+  isDark: boolean;
+  isLight: boolean;
+}
+
 // State Management Types
 export type TConnectionState = {
   connections: TDatabaseConnection[];
