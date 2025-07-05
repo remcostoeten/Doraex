@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { authStore } from '../stores/auth';
-  import AuthWrapper from './AuthWrapper.svelte';
+  import AuthWrapper from './auth-wrapper.svelte';
 
   $: authState = $authStore;
   $: isAuthenticated = authState.isAuthenticated;

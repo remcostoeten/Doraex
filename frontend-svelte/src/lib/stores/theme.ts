@@ -1,13 +1,27 @@
 import { writable } from 'svelte/store';
 import type { TTheme, TThemeState } from '../types';
+import { browser } from '$app/environment';
+
+function getInitialTheme(): TTheme {
+  if (!browser) return 'dark';
+  
+  const storedTheme = localStorage.getItem('theme') as TTheme;
+  
+  if (storedTheme && (storedTheme === 'dark' || storedTheme === 'light')) {
+    return storedTheme;
+  }
+  
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDark ? 'dark' : 'light';
+}
 
 function createThemeStore() {
-  const defaultTheme: TTheme = 'dark';
+  const initialTheme = getInitialTheme();
   
   const initialState: TThemeState = {
-    theme: defaultTheme,
-    isDark: defaultTheme === 'dark',
-    isLight: defaultTheme === 'light'
+    theme: initialTheme,
+    isDark: initialTheme === 'dark',
+    isLight: initialTheme === 'light'
   };
 
   const { subscribe, set, update } = writable<TThemeState>(initialState);
@@ -20,14 +34,19 @@ function createThemeStore() {
       isLight: theme === 'light'
     }));
     
-    localStorage.setItem('theme', theme);
+    if (browser) {
+      localStorage.setItem('theme', theme);
+    }
     updateDocumentClass(theme);
   }
 
   function toggleTheme() {
     update(state => {
       const newTheme: TTheme = state.theme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('theme', newTheme);
+      
+      if (browser) {
+        localStorage.setItem('theme', newTheme);
+      }
       updateDocumentClass(newTheme);
       
       return {
@@ -40,7 +59,7 @@ function createThemeStore() {
   }
 
   function updateDocumentClass(theme: TTheme) {
-    if (typeof document !== 'undefined') {
+    if (browser && typeof document !== 'undefined') {
       const htmlElement = document.documentElement;
       if (theme === 'dark') {
         htmlElement.classList.add('dark');
@@ -51,15 +70,9 @@ function createThemeStore() {
   }
 
   function initializeTheme() {
-    if (typeof window !== 'undefined') {
-      const storedTheme = localStorage.getItem('theme') as TTheme;
-      
-      if (storedTheme && (storedTheme === 'dark' || storedTheme === 'light')) {
-        setTheme(storedTheme);
-      } else {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setTheme(prefersDark ? 'dark' : 'light');
-      }
+    if (browser) {
+      const theme = getInitialTheme();
+      setTheme(theme);
     }
   }
 

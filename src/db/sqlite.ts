@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3'
+import { Database } from 'bun:sqlite'
 import type { TConnectionConfig } from '../types/connections'
 
 function createSqliteConnection(config: { path: string }): Database {

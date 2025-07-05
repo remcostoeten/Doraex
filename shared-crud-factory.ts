@@ -7,9 +7,7 @@ import type {
   TQueryOptions,
   TApiResponse,
   TTableSchema
-} from './types';
-
-export type { TApiResponse };
+} from './shared-types';
 
 // Single Responsibility: HTTP Client Interface
 export interface IHttpClient {
@@ -43,21 +41,11 @@ export interface ICRUDOperations<T extends TBaseEntity> {
 
 // Default HTTP Client Implementation
 export class HttpClient implements IHttpClient {
-  constructor(private baseUrl: string, private getHeaders?: () => Promise<Record<string, string>>) {}
-
-  private async getRequestHeaders(): Promise<Record<string, string>> {
-    const defaultHeaders = { 'Content-Type': 'application/json' };
-    if (this.getHeaders) {
-      const customHeaders = await this.getHeaders();
-      return { ...defaultHeaders, ...customHeaders };
-    }
-    return defaultHeaders;
-  }
+  constructor(private baseUrl: string) {}
 
   async get<T>(url: string): Promise<TApiResponse<T>> {
     try {
-      const headers = await this.getRequestHeaders();
-      const response = await fetch(`${this.baseUrl}${url}`, { headers });
+      const response = await fetch(`${this.baseUrl}${url}`);
       return await response.json();
     } catch (error) {
       return { success: false, error: `GET request failed: ${error}` };
@@ -66,10 +54,9 @@ export class HttpClient implements IHttpClient {
 
   async post<T>(url: string, data: unknown): Promise<TApiResponse<T>> {
     try {
-      const headers = await this.getRequestHeaders();
       const response = await fetch(`${this.baseUrl}${url}`, {
         method: 'POST',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
       return await response.json();
@@ -80,10 +67,9 @@ export class HttpClient implements IHttpClient {
 
   async put<T>(url: string, data: unknown): Promise<TApiResponse<T>> {
     try {
-      const headers = await this.getRequestHeaders();
       const response = await fetch(`${this.baseUrl}${url}`, {
         method: 'PUT',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
       return await response.json();
@@ -94,10 +80,8 @@ export class HttpClient implements IHttpClient {
 
   async delete<T>(url: string): Promise<TApiResponse<T>> {
     try {
-      const headers = await this.getRequestHeaders();
       const response = await fetch(`${this.baseUrl}${url}`, {
-        method: 'DELETE',
-        headers
+        method: 'DELETE'
       });
       return await response.json();
     } catch (error) {

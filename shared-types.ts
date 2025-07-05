@@ -26,21 +26,11 @@ export type TColumnType = 'TEXT' | 'INTEGER' | 'REAL' | 'BOOLEAN' | 'DATE' | 'DA
 
 export type TTableColumn = {
   name: string;
-  type: string;
+  type: TColumnType;
   nullable: boolean;
   primaryKey: boolean;
   defaultValue?: string;
-  autoIncrement?: boolean;
-};
-
-export type TColumnDefinition = {
-  name: string;
-  type: string;
-  nullable: boolean;
-  primaryKey: boolean;
-  autoIncrement?: boolean;
-  defaultValue?: string;
-};
+}
 
 export type TTableSchema = {
   name: string;
@@ -107,62 +97,6 @@ export type TCRUDConfig<T extends TBaseEntity> = {
   schema: TTableSchema;
   baseUrl: string;
   connectionId: string;
-}
-
-// Authentication Types
-export type TAuthUser = {
-  id: string;
-  email: string;
-  name: string;
-  role?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export type TAuthTokens = {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  token_type: string;
-}
-
-export type TAuthState = {
-  user: TAuthUser | null;
-  tokens: TAuthTokens | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export type TLoginCredentials = {
-  email: string;
-  password: string;
-}
-
-export type TRegisterData = {
-  email: string;
-  password: string;
-  name: string;
-  confirmPassword: string;
-}
-
-export type TPasswordReset = {
-  email: string;
-}
-
-export type TPasswordResetConfirm = {
-  token: string;
-  password: string;
-  confirmPassword: string;
-}
-
-// Theme Types
-export type TTheme = 'dark' | 'light';
-
-export type TThemeState = {
-  theme: TTheme;
-  isDark: boolean;
-  isLight: boolean;
 }
 
 // State Management Types

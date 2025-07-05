@@ -4,6 +4,49 @@ import * as postgres from './postgres'
 import { parsePostgresUrl } from '../utils/parsers'
 
 const connections = new Map<string, TConnection>()
+const SYSTEM_CONNECTION_ID = 'sample-db' // Our SQLite system database
+
+// Load saved connections on startup
+export async function loadSavedConnections() {
+  try {
+    const result = await executeQuery(SYSTEM_CONNECTION_ID, 'SELECT * FROM connections WHERE is_active = 1')
+    
+    for (const row of result) {
+      try {
+        const config = JSON.parse(row.config)
+        await createConnection(row.type, config, row.id)
+        console.log(`✅ Restored connection: ${row.name} (${row.type})`)
+      } catch (error) {
+        console.error(`❌ Failed to restore connection ${row.name}:`, error)
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load saved connections:', error)
+  }
+}
+
+// Save connection to database
+async function saveConnectionToDB(connectionId: string, name: string, type: string, config: TConnectionConfig) {
+  try {
+    const configJson = JSON.stringify(config)
+    await executeQuery(SYSTEM_CONNECTION_ID, 
+      `INSERT OR REPLACE INTO connections (id, name, type, config, is_active, updated_at) 
+       VALUES ('${connectionId}', '${name}', '${type}', '${configJson}', 1, CURRENT_TIMESTAMP)`
+    )
+  } catch (error) {
+    console.error('Failed to save connection to database:', error)
+  }
+}
+
+// Get saved connections from database
+export async function getSavedConnections() {
+  try {
+    return await executeQuery(SYSTEM_CONNECTION_ID, 'SELECT id, name, type, is_active, created_at FROM connections WHERE is_active = 1')
+  } catch (error) {
+    console.error('Failed to get saved connections:', error)
+    return []
+  }
+}
 
 async function testConnection(type: 'sqlite' | 'postgres', config: TConnectionConfig): Promise<TConnectionTest> {
   try {
@@ -24,7 +67,7 @@ async function testConnection(type: 'sqlite' | 'postgres', config: TConnectionCo
   }
 }
 
-async function createConnection(type: 'sqlite' | 'postgres', config: TConnectionConfig, connectionId: string): Promise<void> {
+async function createConnection(type: 'sqlite' | 'postgres', config: TConnectionConfig, connectionId: string, name?: string, saveToDb: boolean = true): Promise<void> {
   let db
   
   if (type === 'sqlite') {
@@ -41,6 +84,11 @@ async function createConnection(type: 'sqlite' | 'postgres', config: TConnection
     }
   } else {
     throw new Error('Unsupported database type')
+  }
+  
+  // Save to database (skip for system connection to avoid recursion)
+  if (saveToDb && connectionId !== SYSTEM_CONNECTION_ID && name) {
+    await saveConnectionToDB(connectionId, name, type, config)
   }
 }
 

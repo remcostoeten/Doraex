@@ -1,6 +1,6 @@
 <script lang="ts">
-  import AuthWrapper from '$lib/auth/AuthWrapper.svelte';
-  import UserProfile from '$lib/auth/UserProfile.svelte';
+  import AuthWrapper from '$lib/auth/auth-wrapper.svelte';
+  import UserProfile from '$lib/auth/user-profile.svelte';
   import { authStore } from '$lib/stores/auth';
 
   $: authState = $authStore;

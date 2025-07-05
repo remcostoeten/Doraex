@@ -6,6 +6,16 @@ type TConnectionConfig = {
     database: string
     user: string
     password: string
+    ssl?: boolean | {
+      rejectUnauthorized?: boolean
+      ca?: string
+      cert?: string
+      key?: string
+    }
+    connectionTimeoutMillis?: number
+    idleTimeoutMillis?: number
+    max?: number // max pool size
+    application_name?: string
   }
   url?: string
 }

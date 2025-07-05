@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { serveStatic } from 'hono/bun'
 import { cors } from 'hono/cors'
 import { createApi } from './api'
+import { setupDefaultConnection } from './setup'
 
 // Create the application
 function createApp() {
@@ -17,9 +18,12 @@ function createApp() {
 }
 
 // Setup application
-function setupApplication() {
+async function setupApplication() {
   const app = createApp()
   const api = createApi()
+
+  // Initialize default database connection
+  await setupDefaultConnection()
 
   // Mount API routes
   app.route('/api', api)
@@ -30,7 +34,7 @@ function setupApplication() {
   return app
 }
 
-const app = setupApplication()
+const app = await setupApplication()
 
 export default {
   port: 3002,

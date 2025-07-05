@@ -1,8 +1,8 @@
 <script lang="ts">
-  import RouteGuard from '$lib/auth/RouteGuard.svelte';
-  import DatabaseExplorer from '$lib/DatabaseExplorer.svelte';
-  import UserProfile from '$lib/auth/UserProfile.svelte';
-  import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+  import RouteGuard from '$lib/auth/route-guard.svelte';
+  import DatabaseExplorer from '$lib/database-explorer.svelte';
+  import UserProfile from '$lib/auth/user-profile.svelte';
+  import ThemeToggle from '$lib/components/theme-toggle.svelte';
 </script>
 
 <svelte:head>

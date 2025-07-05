@@ -135,17 +135,18 @@ export class AuthenticatedHttpClient implements IHttpClient {
   }
 }
 
-export function createAuthenticatedCRUDFactory<T extends import('./types').TBaseEntity>(
+export async function createAuthenticatedCRUDFactory<T extends import('./types').TBaseEntity>(
   config: import('./types').TCRUDConfig<T>,
   logger?: import('./crud-factory').ILogger,
   validator?: import('./crud-factory').IValidator<T>
 ) {
   const httpClient = new AuthenticatedHttpClient(config.baseUrl);
+  const { CRUDFactory, ConsoleLogger, BaseValidator } = await import('./crud-factory');
   
-  return new (await import('./crud-factory')).CRUDFactory(
+  return new CRUDFactory(
     config,
     httpClient,
-    logger || new (await import('./crud-factory')).ConsoleLogger(),
-    validator || new (await import('./crud-factory')).BaseValidator<T>(config.schema)
+    logger || new ConsoleLogger(),
+    validator || new BaseValidator<T>(config.schema)
   );
 }

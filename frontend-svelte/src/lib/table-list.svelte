@@ -1,8 +1,18 @@
 <script lang="ts">
-  import type { TTableSchema, TTableState } from './types';
+  import type { TTableSchema, TTableState, TDatabaseConnection } from './types';
+  // import TableCreator from './table-creator.svelte';
 
   export let tableState: TTableState;
+  export let activeConnection: TDatabaseConnection | null;
   export let onTableSelect: (table: TTableSchema) => void;
+  export let onTableCreated: () => void;
+
+  let showTableCreator = false;
+
+  function handleTableCreated() {
+    showTableCreator = false;
+    onTableCreated();
+  }
 
   function getTableIcon(tableName: string) {
     switch (tableName.toLowerCase()) {
@@ -27,7 +37,20 @@
 </script>
 
 <div class="bg-white rounded-lg shadow-md p-6">
-  <h2 class="text-xl font-bold mb-4 text-gray-800">Tables</h2>
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold text-gray-800">Tables</h2>
+    <!-- Temporarily commented out table creator button
+    {#if activeConnection}
+      <button
+        on:click={() => showTableCreator = true}
+        class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
+        title="Create new table"
+      >
+        + Table
+      </button>
+    {/if}
+    -->
+  </div>
   
   {#if tableState.isLoading}
     <div class="flex items-center justify-center py-8">
@@ -125,3 +148,11 @@
     {/each}
   </div>
 </div>
+
+<!-- Table Creator Modal -->
+<!-- <TableCreator 
+  connection={activeConnection}
+  isVisible={showTableCreator}
+  on:close={() => showTableCreator = false}
+  on:tableCreated={handleTableCreated}
+/> -->

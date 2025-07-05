@@ -1,22 +1,36 @@
 import type { Context } from 'hono'
-import { testConnection, createConnection, executeQuery, getTables, getConnections } from '../db'
+import { testConnection, createConnection, executeQuery, getTables, getConnections, getSavedConnections } from '../db'
 import { createSanitizedConnectionInfo, createConnectionId, validateConnectionName, parsePostgresUrl } from '../utils/parsers'
 import type { TConnectionConfig } from '../types/connections'
 
 async function getAllConnections(c: Context) {
-  const connectionList = Array.from(getConnections().keys()).map(id => {
-    const connection = getConnections().get(id)
-    if (!connection) {
-      return { id, type: 'unknown' }
-    }
+  try {
+    const connectionList = Array.from(getConnections().keys()).map(id => {
+      const connection = getConnections().get(id)
+      if (!connection) {
+        return { id, type: 'unknown', name: 'Unknown', isConnected: false }
+      }
+      
+      const sanitizedInfo = createSanitizedConnectionInfo(connection.config, connection.type)
+      return {
+        id,
+        name: sanitizedInfo.database || sanitizedInfo.name || id,
+        type: connection.type,
+        database: sanitizedInfo.database || 'unknown',
+        host: sanitizedInfo.host,
+        port: sanitizedInfo.port,
+        isConnected: true,
+        ...sanitizedInfo
+      }
+    })
     
-    const sanitizedInfo = createSanitizedConnectionInfo(connection.config, connection.type)
-    return {
-      id,
-      ...sanitizedInfo
-    }
-  })
-  return c.json(connectionList)
+    return c.json({ success: true, data: connectionList })
+  } catch (error) {
+    return c.json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    }, 500)
+  }
 }
 
 async function testConnectionHandler(c: Context) {
@@ -74,7 +88,7 @@ async function createConnectionHandler(c: Context) {
       finalConfig = { [type]: config }
     }
     
-    await createConnection(type, finalConfig, connectionId)
+    await createConnection(type, finalConfig, connectionId, name, true)
     return c.json({ id: connectionId, message: 'Connection created successfully' })
   } catch (error) {
     const sanitizedError = error instanceof Error ? error.message : 'Unknown error'
@@ -88,18 +102,24 @@ async function executeQueryHandler(c: Context) {
     const { query } = await c.req.json()
     
     if (!connectionId) {
-      return c.json({ error: 'Connection ID is required' }, 400)
+      return c.json({ success: false, error: 'Connection ID is required' }, 400)
     }
     
     const result = await executeQuery(connectionId, query)
     
     return c.json({
-      result,
-      executedAt: new Date().toISOString(),
-      query
+      success: true,
+      data: {
+        rows: Array.isArray(result) ? result : [result],
+        executedAt: new Date().toISOString(),
+        query
+      }
     })
   } catch (error) {
-    return c.json({ error: error instanceof Error ? error.message : 'Unknown error' }, 500)
+    return c.json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    }, 500)
   }
 }
 
@@ -108,13 +128,16 @@ async function getTablesHandler(c: Context) {
     const connectionId = c.req.param('id')
     
     if (!connectionId) {
-      return c.json({ error: 'Connection ID is required' }, 400)
+      return c.json({ success: false, error: 'Connection ID is required' }, 400)
     }
     
     const tables = await getTables(connectionId)
-    return c.json(tables)
+    return c.json({ success: true, data: tables })
   } catch (error) {
-    return c.json({ error: error instanceof Error ? error.message : 'Unknown error' }, 500)
+    return c.json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    }, 500)
   }
 }
 

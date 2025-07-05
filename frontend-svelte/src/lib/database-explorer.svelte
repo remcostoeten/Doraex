@@ -8,10 +8,11 @@
     TConnectionState, 
     TTableState
   } from './types';
-  import { createCRUDFactory } from './crud-factory';
-  import ConnectionManager from './ConnectionManager.svelte';
-  import TableList from './TableList.svelte';
-  import TableViewer from './TableViewer.svelte';
+  import { createCRUDFactory, HttpClient } from './crud-factory';
+  import ConnectionManager from './connection-manager.svelte';
+  import TableList from './table-list.svelte';
+  import TableViewer from './table-viewer.svelte';
+  // import QueryExecutor from './query-executor.svelte';
 
   // Reactive state using Svelte stores approach
   let connectionState: TConnectionState = {
@@ -32,6 +33,8 @@
     pageSize: 20
   };
 
+  let showQueryExecutor = false;
+
   // Initialize by loading connections from backend
   onMount(async () => {
     await loadConnections();
@@ -43,7 +46,7 @@
 
     try {
       const auth = get(authStore);
-      const headers = {};
+      const headers: Record<string, string> = {};
       
       if (auth.isAuthenticated && auth.tokens?.access_token) {
         headers['Authorization'] = `Bearer ${auth.tokens.access_token}`;
@@ -102,7 +105,7 @@
 
     try {
       const auth = get(authStore);
-      const headers = {};
+      const headers: Record<string, string> = {};
       
       if (auth.isAuthenticated && auth.tokens?.access_token) {
         headers['Authorization'] = `Bearer ${auth.tokens.access_token}`;
@@ -114,53 +117,18 @@
       const result = await response.json();
 
       if (result.success) {
-        // Mock table schemas based on our sample data
-        const mockTables: TTableSchema[] = [
-          {
-            name: "users",
-            columns: [
-              { name: "id", type: "INTEGER", nullable: false, primaryKey: true },
-              { name: "name", type: "TEXT", nullable: false, primaryKey: false },
-              { name: "email", type: "TEXT", nullable: false, primaryKey: false },
-              { name: "age", type: "INTEGER", nullable: true, primaryKey: false },
-              { name: "department", type: "TEXT", nullable: true, primaryKey: false },
-              { name: "salary", type: "DECIMAL", nullable: true, primaryKey: false },
-              { name: "hire_date", type: "DATE", nullable: true, primaryKey: false },
-              { name: "is_active", type: "BOOLEAN", nullable: true, primaryKey: false },
-              { name: "created_at", type: "DATETIME", nullable: true, primaryKey: false }
-            ]
-          },
-          {
-            name: "products", 
-            columns: [
-              { name: "id", type: "INTEGER", nullable: false, primaryKey: true },
-              { name: "name", type: "TEXT", nullable: false, primaryKey: false },
-              { name: "description", type: "TEXT", nullable: true, primaryKey: false },
-              { name: "price", type: "DECIMAL", nullable: false, primaryKey: false },
-              { name: "category", type: "TEXT", nullable: true, primaryKey: false },
-              { name: "stock_quantity", type: "INTEGER", nullable: true, primaryKey: false },
-              { name: "is_available", type: "BOOLEAN", nullable: true, primaryKey: false },
-              { name: "created_at", type: "DATETIME", nullable: true, primaryKey: false }
-            ]
-          },
-          {
-            name: "orders",
-            columns: [
-              { name: "id", type: "INTEGER", nullable: false, primaryKey: true },
-              { name: "user_id", type: "INTEGER", nullable: false, primaryKey: false },
-              { name: "product_id", type: "INTEGER", nullable: false, primaryKey: false },
-              { name: "quantity", type: "INTEGER", nullable: false, primaryKey: false },
-              { name: "total_amount", type: "DECIMAL", nullable: false, primaryKey: false },
-              { name: "order_date", type: "DATE", nullable: true, primaryKey: false },
-              { name: "status", type: "TEXT", nullable: true, primaryKey: false },
-              { name: "created_at", type: "DATETIME", nullable: true, primaryKey: false }
-            ]
-          }
-        ];
+        // Use actual tables from backend response
+        const actualTables: TTableSchema[] = result.data.map((table: any) => ({
+          name: table.name,
+          columns: [
+            // Basic columns for any table - we'll get real schema later
+            { name: "id", type: "INTEGER", nullable: false, primaryKey: true }
+          ]
+        }));
 
         tableState = {
           ...tableState,
-          tables: mockTables,
+          tables: actualTables,
           isLoading: false
         };
       } else {
@@ -189,6 +157,16 @@
     };
 
     try {
+      // Create auth-aware HTTP client
+      const getAuthHeaders = async () => {
+        const auth = get(authStore);
+        const headers: Record<string, string> = {};
+        if (auth.isAuthenticated && auth.tokens?.access_token) {
+          headers['Authorization'] = `Bearer ${auth.tokens.access_token}`;
+        }
+        return headers;
+      };
+
       // Create CRUD factory for the selected table
       const config = {
         tableName: table.name,
@@ -197,7 +175,8 @@
         connectionId: connectionState.activeConnection!.id
       };
 
-      const crudFactory = createCRUDFactory(config);
+      const httpClient = new HttpClient(config.baseUrl, getAuthHeaders);
+      const crudFactory = createCRUDFactory(config, httpClient);
       
       // Load table data
       const [dataResponse, countResponse] = await Promise.all([
@@ -239,6 +218,11 @@
     loadTables();
   }
 
+  function handleConnectionCreated() {
+    // Reload connections after creating a new one
+    loadConnections();
+  }
+
   function handleRefresh() {
     if (tableState.activeTable) {
       selectTable(tableState.activeTable);
@@ -254,6 +238,19 @@
       selectTable(tableState.activeTable);
     }
   }
+
+  function handleOpenQueryExecutor() {
+    showQueryExecutor = true;
+  }
+
+  function handleQueryExecuted() {
+    // Refresh current table if one is selected
+    if (tableState.activeTable) {
+      selectTable(tableState.activeTable);
+    }
+    // Reload tables to catch any new tables that might have been created
+    loadTables();
+  }
 </script>
 
 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -262,6 +259,8 @@
     <ConnectionManager 
       {connectionState}
       onConnectionChange={handleConnectionChange}
+      onConnectionCreated={handleConnectionCreated}
+      onOpenQueryExecutor={handleOpenQueryExecutor}
     />
   </div>
 
@@ -269,7 +268,9 @@
   <div class="lg:col-span-1">
     <TableList 
       {tableState}
+      activeConnection={connectionState.activeConnection}
       onTableSelect={selectTable}
+      onTableCreated={loadTables}
     />
   </div>
 
@@ -282,3 +283,11 @@
     />
   </div>
 </div>
+
+<!-- Query Executor Modal -->
+<!-- <QueryExecutor 
+  connection={connectionState.activeConnection}
+  isVisible={showQueryExecutor}
+  on:close={() => showQueryExecutor = false}
+  on:queryExecuted={handleQueryExecuted}
+/> -->
