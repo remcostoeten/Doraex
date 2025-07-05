@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { themeStore } from '$lib/stores/theme';
 	import '../app.css';
+	import RouteGuard from '$lib/auth/route-guard.svelte';
 
 	let { children } = $props();
-	
-	onMount(() => {
-		themeStore.initializeTheme();
-	});
 </script>
 
-<div class="bg-light-primary dark:bg-dark-primary text-light-primary dark:text-dark-primary min-h-screen transition-colors duration-200">
-	{@render children()}
+<!-- Vercel-style pure black background with auth protection -->
+<div class="min-h-screen bg-black text-white font-sans antialiased">
+	<RouteGuard>
+		{@render children()}
+	</RouteGuard>
 </div>
