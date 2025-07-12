@@ -4,9 +4,10 @@ import fs from "fs"
 import { promisify } from "util"
 
 export interface SQLiteConnectionConfig {
-  id: string
-  name: string
+  id?: string
+  name?: string
   filePath: string
+  fileName?: string
 }
 
 export interface TableInfo {
@@ -32,7 +33,7 @@ export class SQLiteConnection {
 
   constructor(config: SQLiteConnectionConfig) {
     this.config = config
-    this.dbPath = path.join(process.cwd(), "uploads", config.filePath)
+    this.dbPath = config.filePath
   }
 
   private async getDatabase(): Promise<sqlite3.Database> {
@@ -141,7 +142,7 @@ export class SQLiteConnection {
     const db = await this.getDatabase()
 
     try {
-      const query = `PRAGMA table_info(${tableName})`
+      const query = `PRAGMA table_info("${tableName}")`
       const columns = await this.getAllRows(db, query) as ColumnInfo[]
       return columns
     } finally {
@@ -162,16 +163,16 @@ export class SQLiteConnection {
 
     try {
       // Get column information
-      const columnsQuery = `PRAGMA table_info(${tableName})`
+      const columnsQuery = `PRAGMA table_info("${tableName}")`
       const columns = await this.getAllRows(db, columnsQuery) as ColumnInfo[]
 
       // Get total count
-      const countQuery = `SELECT COUNT(*) as count FROM ${tableName}`
+      const countQuery = `SELECT COUNT(*) as count FROM "${tableName}"`
       const countResult = await this.getRow(db, countQuery) as { count: number }
       const total = countResult.count
 
       // Get data with pagination
-      const dataQuery = `SELECT * FROM ${tableName} LIMIT ? OFFSET ?`
+      const dataQuery = `SELECT * FROM "${tableName}" LIMIT ? OFFSET ?`
       const data = await this.getAllRows(db, dataQuery, [limit, offset])
 
       return {
@@ -271,19 +272,97 @@ export class SQLiteConnection {
 
   async addColumn(
     tableName: string,
-    columnName: string,
-    columnType: string,
-    nullable = true,
-    defaultValue?: string,
+    column: {
+      name: string
+      type: string
+      nullable?: boolean
+      primary?: boolean
+      default?: string
+      autoIncrement?: boolean
+    }
   ): Promise<void> {
     const db = await this.getDatabase()
 
     try {
-      let alterSQL = `ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnType}`
-      if (!nullable) alterSQL += " NOT NULL"
-      if (defaultValue) alterSQL += ` DEFAULT ${defaultValue}`
+      let alterSQL = `ALTER TABLE ${tableName} ADD COLUMN ${column.name} ${column.type}`
+      if (!column.nullable && !column.primary) alterSQL += " NOT NULL"
+      if (column.primary) alterSQL += " PRIMARY KEY"
+      if (column.autoIncrement && column.primary) alterSQL += " AUTOINCREMENT"
+      if (column.default) alterSQL += ` DEFAULT ${column.default}`
 
       await this.runQuery(db, alterSQL)
+    } finally {
+      await this.closeDatabase(db)
+    }
+  }
+
+  async modifyColumn(
+    tableName: string,
+    columnName: string,
+    newColumn: {
+      name: string
+      type: string
+      nullable?: boolean
+      primary?: boolean
+      default?: string
+      autoIncrement?: boolean
+    }
+  ): Promise<void> {
+    const db = await this.getDatabase()
+
+    try {
+      // SQLite doesn't support ALTER COLUMN directly, so we need to recreate the table
+      const columns = await this.getTableColumns(tableName)
+      const columnIndex = columns.findIndex((col) => col.name === columnName)
+      
+      if (columnIndex === -1) {
+        throw new Error(`Column ${columnName} not found in table ${tableName}`)
+      }
+
+      // Update the column definition
+      const updatedColumns = [...columns]
+      updatedColumns[columnIndex] = {
+        ...updatedColumns[columnIndex],
+        name: newColumn.name,
+        type: newColumn.type,
+        notnull: newColumn.nullable === false ? 1 : 0,
+        pk: newColumn.primary ? 1 : 0,
+        dflt_value: newColumn.default || null
+      }
+
+      // Start transaction
+      await this.runQuery(db, "BEGIN TRANSACTION")
+
+      try {
+        // Create new table with updated schema
+        const columnDefs = updatedColumns
+          .map((col) => {
+            let def = `${col.name} ${col.type}`
+            if (col.pk) def += " PRIMARY KEY"
+            if (col.pk && newColumn.autoIncrement) def += " AUTOINCREMENT"
+            if (col.notnull && !col.pk) def += " NOT NULL"
+            if (col.dflt_value !== null) def += ` DEFAULT ${col.dflt_value}`
+            return def
+          })
+          .join(", ")
+
+        const tempTableName = `${tableName}_temp_${Date.now()}`
+        await this.runQuery(db, `CREATE TABLE ${tempTableName} (${columnDefs})`)
+
+        // Copy data (handling column name change)
+        const oldColumnNames = columns.map((col) => col.name === columnName ? columnName : col.name).join(", ")
+        const newColumnNames = updatedColumns.map((col) => col.name).join(", ")
+        await this.runQuery(db, `INSERT INTO ${tempTableName} (${newColumnNames}) SELECT ${oldColumnNames} FROM ${tableName}`)
+
+        // Drop old table and rename new one
+        await this.runQuery(db, `DROP TABLE ${tableName}`)
+        await this.runQuery(db, `ALTER TABLE ${tempTableName} RENAME TO ${tableName}`)
+
+        await this.runQuery(db, "COMMIT")
+      } catch (error) {
+        await this.runQuery(db, "ROLLBACK")
+        throw error
+      }
     } finally {
       await this.closeDatabase(db)
     }

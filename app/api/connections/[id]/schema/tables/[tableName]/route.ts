@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { SQLiteConnection } from "@/lib/sqlite-connection"
 import path from "path"
+import { getSQLiteConnection } from "@/lib/sqlite-helper"
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string; tableName: string } }) {
   try {
@@ -19,6 +19,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     const filePath = path.join(process.cwd(), "uploads", config.fileName)
+    const SQLiteConnection = await getSQLiteConnection()
     const connection = new SQLiteConnection({
       filePath,
       fileName: config.fileName,
@@ -50,6 +51,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     const filePath = path.join(process.cwd(), "uploads", config.fileName)
+    const SQLiteConnection = await getSQLiteConnection()
     const connection = new SQLiteConnection({
       filePath,
       fileName: config.fileName,

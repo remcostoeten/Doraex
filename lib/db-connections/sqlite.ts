@@ -6,7 +6,10 @@
  * The actual implementation lives in "../sqlite-connection".
  */
 import { SQLiteConnection } from "../sqlite-connection"
-export type { SQLiteDatabaseConfig } from "../sqlite-connection"
+export type { SQLiteConnectionConfig } from "../sqlite-connection"
+
+/* Named export */
+export { SQLiteConnection }
 
 /* Optional default export for convenience */
 export default SQLiteConnection

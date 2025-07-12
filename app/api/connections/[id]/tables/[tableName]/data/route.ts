@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { PostgreSQLConnection, parsePostgreSQLUrl } from "@/lib/db-connections"
-import { SQLiteConnection } from "@/lib/db-connections/sqlite"
+import { getSQLiteConnection } from "@/lib/sqlite-helper"
 
 export async function GET(request: NextRequest, { params }: { params: { id: string; tableName: string } }) {
   try {
@@ -19,6 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     if (config.type === "sqlite") {
       try {
         const { filePath, fileName } = config
+        const SQLiteConnection = await getSQLiteConnection()
         const sqliteConnection = new SQLiteConnection({ filePath, fileName })
         const data = await sqliteConnection.getTableData(params.tableName, limit, offset)
         return NextResponse.json(data)

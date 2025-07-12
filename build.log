@@ -1,0 +1,100 @@
+
+> Doraex@0.1.0 build /Users/stoetenremco/projects/Doraex
+> next build
+
+  ▲ Next.js 14.2.16
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+Error: Could not locate the bindings file. Tried:
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Debug/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Release/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/out/Debug/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/Debug/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/out/Release/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/Release/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/default/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/compiled/23.11.0/darwin/arm64/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/release/install-root/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/debug/install-root/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/default/install-root/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/lib/binding/node-v131-darwin-arm64/node_sqlite3.node
+    at bindings (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/bindings@1.5.0/node_modules/bindings/bindings.js:126:9)
+    at Object.<anonymous> (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/lib/sqlite3-binding.js:1:37)
+    at Module._compile (node:internal/modules/cjs/loader:1734:14)
+    at Object..js (node:internal/modules/cjs/loader:1899:10)
+    at Module.load (node:internal/modules/cjs/loader:1469:32)
+    at Function._load (node:internal/modules/cjs/loader:1286:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/require-hook.js:65:28) {
+  tries: [
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Debug/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Release/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/out/Debug/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/Debug/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/out/Release/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/Release/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/default/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/compiled/23.11.0/darwin/arm64/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/release/install-root/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/debug/install-root/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/default/install-root/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/lib/binding/node-v131-darwin-arm64/node_sqlite3.node'
+  ]
+}
+Error: Could not locate the bindings file. Tried:
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Debug/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Release/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/out/Debug/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/Debug/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/out/Release/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/Release/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/default/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/compiled/23.11.0/darwin/arm64/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/release/install-root/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/debug/install-root/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/default/install-root/node_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/lib/binding/node-v131-darwin-arm64/node_sqlite3.node
+    at bindings (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/bindings@1.5.0/node_modules/bindings/bindings.js:126:9)
+    at Object.<anonymous> (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/lib/sqlite3-binding.js:1:37)
+    at Module._compile (node:internal/modules/cjs/loader:1734:14)
+    at Object..js (node:internal/modules/cjs/loader:1899:10)
+    at Module.load (node:internal/modules/cjs/loader:1469:32)
+    at Function._load (node:internal/modules/cjs/loader:1286:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/require-hook.js:65:28) {
+  tries: [
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Debug/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Release/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/out/Debug/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/Debug/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/out/Release/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/Release/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/default/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/compiled/23.11.0/darwin/arm64/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/release/install-root/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/debug/install-root/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/addon-build/default/install-root/node_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/lib/binding/node-v131-darwin-arm64/node_sqlite3.node'
+  ]
+}
+
+> Build error occurred
+Error: Failed to collect page data for /api/connections/[id]/schema/tables/[tableName]
+    at /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/utils.js:1268:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  type: 'Error'
+}
+ ELIFECYCLE  Command failed with exit code 1.

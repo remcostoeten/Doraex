@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { PostgreSQLConnection, parsePostgreSQLUrl } from "@/lib/db-connections"
-import { SQLiteConnection } from "@/lib/db-connections"
+import { SQLiteConnection } from "@/lib/db-connections/sqlite"
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { SQLiteConnection } from "@/lib/sqlite-connection"
+import { SQLiteConnection } from "@/lib/db-connections/sqlite"
 import path from "path"
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       fileName: config.fileName,
     })
 
-    await connection.createTable({ name, columns })
+    await connection.createTable(name, columns)
 
     return NextResponse.json({ success: true, message: "Table created successfully" })
   } catch (error) {

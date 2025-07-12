@@ -132,4 +132,24 @@ export class PostgreSQLConnection {
   }
 }
 
-/* parsePostgreSQLUrl function stays exactly the same */
+export function parsePostgreSQLUrl(url: string): PostgreSQLConfig {
+  try {
+    const parsed = new URL(url)
+    
+    if (!parsed.protocol.startsWith('postgres')) {
+      throw new Error('URL must start with postgresql:// or postgres://')
+    }
+    
+    return {
+      host: parsed.hostname,
+      port: parsed.port ? parseInt(parsed.port) : 5432,
+      database: parsed.pathname.slice(1), // Remove leading '/'
+      username: parsed.username,
+      password: parsed.password,
+      ssl: parsed.searchParams.get('sslmode') === 'require'
+    }
+  } catch (error) {
+    throw new Error(`Invalid PostgreSQL URL: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
