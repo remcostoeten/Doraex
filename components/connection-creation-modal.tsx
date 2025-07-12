@@ -88,7 +88,7 @@ export function ConnectionCreationModal({ open, onOpenChange }: ConnectionCreati
       }
       setPostgresForm((prev) => ({ ...prev, name: suggestedName }))
     }
-  }, [postgresForm.url])
+  }, [postgresForm.url, postgresForm.name])
 
   const handleManualPaste = async (type: "postgres" | "turso") => {
     try {

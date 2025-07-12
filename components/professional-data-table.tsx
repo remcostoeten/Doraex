@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
@@ -31,13 +31,7 @@ export function ProfessionalDataTable({ tableName }: ProfessionalDataTableProps)
   const selectedTableData = activeConnection?.tables?.find((table) => table.name === tableName)
 
   // Fetch real table data
-  useEffect(() => {
-    if (activeConnection && tableName && selectedTableData) {
-      fetchTableData()
-    }
-  }, [activeConnection, tableName, currentPage])
-
-  const fetchTableData = async () => {
+  const fetchTableData = useCallback(async () => {
     if (!activeConnection || !tableName) return
 
     setIsLoadingData(true)
@@ -85,7 +79,14 @@ export function ProfessionalDataTable({ tableName }: ProfessionalDataTableProps)
     } finally {
       setIsLoadingData(false)
     }
-  }
+  }, [activeConnection, tableName, currentPage, pageSize])
+
+  // Fetch real table data
+  useEffect(() => {
+    if (activeConnection && tableName && selectedTableData) {
+      fetchTableData()
+    }
+  }, [activeConnection, tableName, selectedTableData, fetchTableData])
 
   // Replace the mockRows usage with real data
   const displayRows = tableData?.rows || []

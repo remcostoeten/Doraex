@@ -61,7 +61,7 @@ export function ConnectionTestProgress({ isActive, onComplete }: ConnectionTestP
       // Reset state when not active
       setCurrentStep(0)
       setProgress(0)
-      setSteps(steps.map((step) => ({ ...step, status: "pending" })))
+      setSteps((prevSteps) => prevSteps.map((step) => ({ ...step, status: "pending" })))
       return
     }
 
@@ -129,7 +129,7 @@ export function ConnectionTestProgress({ isActive, onComplete }: ConnectionTestP
     }
 
     runTest()
-  }, [isActive, onComplete])
+  }, [isActive, onComplete, steps])
 
   if (!isActive) return null
 

@@ -259,7 +259,7 @@ export function DatabaseConnectionForm({ onSubmit }: DatabaseConnectionFormProps
       <Alert>
         <Clipboard className="h-4 w-4" />
         <AlertDescription>
-          <strong>Tip:</strong> You can paste database connection strings anywhere in this modal. We'll automatically
+          <strong>Tip:</strong> You can paste database connection strings anywhere in this modal. We&apos;ll automatically
           detect and parse PostgreSQL URLs, even if wrapped in <code>psql</code> commands or environment variables.
         </AlertDescription>
       </Alert>
@@ -334,10 +334,10 @@ export function DatabaseConnectionForm({ onSubmit }: DatabaseConnectionFormProps
                       • <code>postgresql://user:pass@host:port/db</code>
                     </p>
                     <p>
-                      • <code>psql 'postgresql://...'</code>
+                      • <code>psql &apos;postgresql://...&apos;</code>
                     </p>
                     <p>
-                      • <code>DATABASE_URL="postgresql://..."</code>
+                      • <code>DATABASE_URL=&quot;postgresql://...&quot;</code>
                     </p>
                     <p>• Environment variables with any quotes or psql wrappers</p>
                   </div>

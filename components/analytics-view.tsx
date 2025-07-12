@@ -159,7 +159,7 @@ export function AnalyticsView() {
               <h3 className="text-xl font-semibold mb-2">No Analytics Data</h3>
               <p className="text-muted-foreground mb-4">Connect to a database to view analytics and insights.</p>
               <p className="text-sm text-muted-foreground">
-                Once connected, you'll see database metrics, table statistics, and query performance data here.
+                Once connected, you&apos;ll see database metrics, table statistics, and query performance data here.
               </p>
             </div>
           </div>
