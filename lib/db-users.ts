@@ -21,6 +21,7 @@ export interface CreateUserData {
 
 export class UserDatabase {
   private dbPath: string
+  private db: Database.Database | null = null
 
   constructor() {
     // Create uploads directory if it doesn't exist
@@ -33,10 +34,13 @@ export class UserDatabase {
   }
 
   private getDatabase(): Database.Database {
-    return new Database(this.dbPath)
+    if (!this.db) {
+      this.db = new Database(this.dbPath)
+    }
+    return this.db
   }
 
-  async initializeDatabase(): Promise<void> {
+initializeDatabase(): void {
     const db = this.getDatabase()
 
     try {
@@ -63,12 +67,10 @@ export class UserDatabase {
     } catch (error) {
       console.error("Failed to initialize user database:", error)
       throw error
-    } finally {
-      db.close()
     }
   }
 
-  async createUser(userData: CreateUserData): Promise<User> {
+async createUser(userData: CreateUserData): Promise<User> {
     const db = this.getDatabase()
 
     try {
@@ -76,21 +78,26 @@ export class UserDatabase {
       const saltRounds = 12
       const passwordHash = await bcrypt.hash(userData.password, saltRounds)
 
-      const stmt = db.prepare(`
+      const insertStmt = db.prepare(`
         INSERT INTO users (username, email, name, password_hash)
         VALUES (?, ?, ?, ?)
       `)
-
-      const result = stmt.run(userData.username, userData.email, userData.name, passwordHash)
+      
+      const result = insertStmt.run(
+        userData.username,
+        userData.email,
+        userData.name,
+        passwordHash
+      )
 
       // Get the created user
-      const getUser = db.prepare(`
+      const selectStmt = db.prepare(`
         SELECT id, username, email, name, created_at, updated_at
         FROM users 
         WHERE rowid = ?
       `)
-
-      const user = getUser.get(result.lastInsertRowid) as User
+      
+      const user = selectStmt.get(result.lastInsertRowid) as User
 
       return user
     } catch (error: any) {
@@ -102,75 +109,61 @@ export class UserDatabase {
         }
       }
       throw error
-    } finally {
-      db.close()
     }
   }
 
-  async findUserByEmailOrUsername(identifier: string): Promise<User | null> {
+findUserByEmailOrUsername(identifier: string): User | null {
     const db = this.getDatabase()
 
-    try {
-      const stmt = db.prepare(`
-        SELECT id, username, email, name, created_at, updated_at
-        FROM users 
-        WHERE email = ? OR username = ?
-      `)
+    const stmt = db.prepare(`
+      SELECT id, username, email, name, created_at, updated_at
+      FROM users 
+      WHERE email = ? OR username = ?
+    `)
 
-      const user = stmt.get(identifier, identifier) as User | undefined
+    const user = stmt.get(identifier, identifier) as User | undefined
 
-      return user || null
-    } finally {
-      db.close()
-    }
+    return user || null
   }
 
-  async verifyPassword(identifier: string, password: string): Promise<User | null> {
+async verifyPassword(identifier: string, password: string): Promise<User | null> {
     const db = this.getDatabase()
 
-    try {
-      const stmt = db.prepare(`
-        SELECT id, username, email, name, password_hash, created_at, updated_at
-        FROM users 
-        WHERE email = ? OR username = ?
-      `)
+    const stmt = db.prepare(`
+      SELECT id, username, email, name, password_hash, created_at, updated_at
+      FROM users 
+      WHERE email = ? OR username = ?
+    `)
 
-      const user = stmt.get(identifier, identifier) as (User & { password_hash: string }) | undefined
+    const user = stmt.get(identifier, identifier) as (User & { password_hash: string }) | undefined
 
-      if (!user) {
-        return null
-      }
-
-      const isValidPassword = await bcrypt.compare(password, user.password_hash)
-
-      if (!isValidPassword) {
-        return null
-      }
-
-      // Return user without password hash
-      const { password_hash, ...userWithoutPassword } = user
-      return userWithoutPassword
-    } finally {
-      db.close()
+    if (!user) {
+      return null
     }
+
+    const isValidPassword = await bcrypt.compare(password, user.password_hash)
+
+    if (!isValidPassword) {
+      return null
+    }
+
+    // Return user without password hash
+    const { password_hash, ...userWithoutPassword } = user
+    return userWithoutPassword
   }
 
-  async getUserById(id: string): Promise<User | null> {
+getUserById(id: string): User | null {
     const db = this.getDatabase()
 
-    try {
-      const stmt = db.prepare(`
-        SELECT id, username, email, name, created_at, updated_at
-        FROM users 
-        WHERE id = ?
-      `)
+    const stmt = db.prepare(`
+      SELECT id, username, email, name, created_at, updated_at
+      FROM users 
+      WHERE id = ?
+    `)
 
-      const user = stmt.get(id) as User | undefined
+    const user = stmt.get(id) as User | undefined
 
-      return user || null
-    } finally {
-      db.close()
-    }
+    return user || null
   }
 }
 

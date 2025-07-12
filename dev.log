@@ -1,0 +1,72 @@
+
+> Doraex@0.1.0 dev /Users/stoetenremco/projects/Doraex
+> next dev --port 3420
+
+  ▲ Next.js 14.2.16
+  - Local:        http://localhost:3420
+  - Environments: .env
+
+ ✓ Starting...
+ ⚠ Invalid next.config.mjs options detected: 
+ ⚠     Unrecognized key(s) in object: 'viewTransition' at "experimental"
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+ ✓ Ready in 1284ms
+ ✓ Compiled /api/auth/register in 128ms (60 modules)
+Registration error: Error: Could not locate the bindings file. Tried:
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/build/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/build/Debug/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/build/Release/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/out/Debug/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/Debug/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/out/Release/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/Release/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/build/default/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/compiled/23.11.0/darwin/arm64/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/addon-build/release/install-root/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/addon-build/debug/install-root/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/addon-build/default/install-root/better_sqlite3.node
+ → /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/lib/binding/node-v131-darwin-arm64/better_sqlite3.node
+    at bindings (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/bindings@1.5.0/node_modules/bindings/bindings.js:126:9)
+    at new Database (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/lib/database.js:48:64)
+    at UserDatabase.getDatabase (webpack-internal:///(rsc)/./lib/db-users.ts:29:16)
+    at UserDatabase.createUser (webpack-internal:///(rsc)/./lib/db-users.ts:60:25)
+    at POST (webpack-internal:///(rsc)/./app/api/auth/register/route.ts:48:78)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:55831
+    at async eO.execute (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46527)
+    at async eO.handle (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57165)
+    at async doRender (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1352:42)
+    at async cacheEntry.responseCache.get.routeKind (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1574:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1482:28)
+    at async DevServer.renderPageComponent (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1908:24)
+    at async DevServer.renderToResponseImpl (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1946:32)
+    at async DevServer.pipeImpl (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:921:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:817:17)
+    at async /Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:350:24)
+    at async requestHandlerImpl (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/next@14.2.16_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  tries: [
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/build/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/build/Debug/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/build/Release/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/out/Debug/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/Debug/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/out/Release/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/Release/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/build/default/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/compiled/23.11.0/darwin/arm64/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/addon-build/release/install-root/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/addon-build/debug/install-root/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/addon-build/default/install-root/better_sqlite3.node',
+    '/Users/stoetenremco/projects/Doraex/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/lib/binding/node-v131-darwin-arm64/better_sqlite3.node'
+  ]
+}
+ POST /api/auth/register 500 in 174ms
+   Reload env: .env.local
+ ✓ Compiled in 268ms (202 modules)
+[?25h

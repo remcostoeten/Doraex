@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { userDb } from "@/lib/db-users"
+import { userDb } from "@/lib/db-users-postgres"
 
 export async function POST(request: NextRequest) {
   try {

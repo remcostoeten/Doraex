@@ -1,6 +1,7 @@
-import Database from "better-sqlite3"
+import sqlite3 from "sqlite3"
 import path from "path"
 import fs from "fs"
+import { promisify } from "util"
 
 export interface SQLiteConnectionConfig {
   id: string
@@ -34,20 +35,77 @@ export class SQLiteConnection {
     this.dbPath = path.join(process.cwd(), "uploads", config.filePath)
   }
 
-  private getDatabase(): Database.Database {
+  private async getDatabase(): Promise<sqlite3.Database> {
     if (!fs.existsSync(this.dbPath)) {
       throw new Error(`SQLite database file not found: ${this.dbPath}`)
     }
-    return new Database(this.dbPath)
+    
+    return new Promise((resolve, reject) => {
+      const db = new sqlite3.Database(this.dbPath, (err) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(db)
+        }
+      })
+    })
+  }
+
+  private async runQuery(db: sqlite3.Database, query: string, params: any[] = []): Promise<any> {
+    return new Promise((resolve, reject) => {
+      db.run(query, params, function(err) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve({ lastID: this.lastID, changes: this.changes })
+        }
+      })
+    })
+  }
+
+  private async getAllRows(db: sqlite3.Database, query: string, params: any[] = []): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      db.all(query, params, (err, rows) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(rows)
+        }
+      })
+    })
+  }
+
+  private async getRow(db: sqlite3.Database, query: string, params: any[] = []): Promise<any> {
+    return new Promise((resolve, reject) => {
+      db.get(query, params, (err, row) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(row)
+        }
+      })
+    })
+  }
+
+  private async closeDatabase(db: sqlite3.Database): Promise<void> {
+    return new Promise((resolve, reject) => {
+      db.close((err) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve()
+        }
+      })
+    })
   }
 
   async testConnection(): Promise<{ success: boolean; message: string }> {
     try {
-      const db = this.getDatabase()
-
+      const db = await this.getDatabase()
+      
       // Test with a simple query
-      const result = db.prepare("SELECT 1 as test").get()
-      db.close()
+      await this.getRow(db, "SELECT 1 as test")
+      await this.closeDatabase(db)
 
       return {
         success: true,
@@ -62,32 +120,32 @@ export class SQLiteConnection {
   }
 
   async getTables(): Promise<TableInfo[]> {
-    const db = this.getDatabase()
+    const db = await this.getDatabase()
 
     try {
-      const stmt = db.prepare(`
+      const query = `
         SELECT name, sql, type, tbl_name, rootpage
         FROM sqlite_master 
         WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
         ORDER BY name
-      `)
-
-      const tables = stmt.all() as TableInfo[]
+      `
+      
+      const tables = await this.getAllRows(db, query) as TableInfo[]
       return tables
     } finally {
-      db.close()
+      await this.closeDatabase(db)
     }
   }
 
   async getTableColumns(tableName: string): Promise<ColumnInfo[]> {
-    const db = this.getDatabase()
+    const db = await this.getDatabase()
 
     try {
-      const stmt = db.prepare(`PRAGMA table_info(${tableName})`)
-      const columns = stmt.all() as ColumnInfo[]
+      const query = `PRAGMA table_info(${tableName})`
+      const columns = await this.getAllRows(db, query) as ColumnInfo[]
       return columns
     } finally {
-      db.close()
+      await this.closeDatabase(db)
     }
   }
 
@@ -100,21 +158,21 @@ export class SQLiteConnection {
     total: number
     columns: ColumnInfo[]
   }> {
-    const db = this.getDatabase()
+    const db = await this.getDatabase()
 
     try {
       // Get column information
-      const columnsStmt = db.prepare(`PRAGMA table_info(${tableName})`)
-      const columns = columnsStmt.all() as ColumnInfo[]
+      const columnsQuery = `PRAGMA table_info(${tableName})`
+      const columns = await this.getAllRows(db, columnsQuery) as ColumnInfo[]
 
       // Get total count
-      const countStmt = db.prepare(`SELECT COUNT(*) as count FROM ${tableName}`)
-      const countResult = countStmt.get() as { count: number }
+      const countQuery = `SELECT COUNT(*) as count FROM ${tableName}`
+      const countResult = await this.getRow(db, countQuery) as { count: number }
       const total = countResult.count
 
       // Get data with pagination
-      const dataStmt = db.prepare(`SELECT * FROM ${tableName} LIMIT ? OFFSET ?`)
-      const data = dataStmt.all(limit, offset)
+      const dataQuery = `SELECT * FROM ${tableName} LIMIT ? OFFSET ?`
+      const data = await this.getAllRows(db, dataQuery, [limit, offset])
 
       return {
         data,
@@ -122,7 +180,7 @@ export class SQLiteConnection {
         columns,
       }
     } finally {
-      db.close()
+      await this.closeDatabase(db)
     }
   }
 
@@ -131,36 +189,31 @@ export class SQLiteConnection {
     columns: string[]
     rowsAffected?: number
   }> {
-    const db = this.getDatabase()
+    const db = await this.getDatabase()
 
     try {
       const trimmedQuery = query.trim().toLowerCase()
+      let resultData = []
+      let columns = []
+      let rowsAffected = undefined
 
       if (trimmedQuery.startsWith("select")) {
         // For SELECT queries
-        const stmt = db.prepare(query)
-        const data = stmt.all()
-
-        // Get column names from the first row or from the statement
-        const columns = data.length > 0 ? Object.keys(data[0]) : []
-
-        return {
-          data,
-          columns,
-        }
+        resultData = await this.getAllRows(db, query)
+        columns = resultData.length > 0 ? Object.keys(resultData[0]) : []
       } else {
         // For INSERT, UPDATE, DELETE queries
-        const stmt = db.prepare(query)
-        const result = stmt.run()
+        const result = await this.runQuery(db, query)
+        rowsAffected = result.changes
+      }
 
-        return {
-          data: [],
-          columns: [],
-          rowsAffected: result.changes,
-        }
+      return {
+        data: resultData,
+        columns,
+        rowsAffected,
       }
     } finally {
-      db.close()
+      await this.closeDatabase(db)
     }
   }
 
@@ -174,7 +227,7 @@ export class SQLiteConnection {
       defaultValue?: string
     }>,
   ): Promise<void> {
-    const db = this.getDatabase()
+    const db = await this.getDatabase()
 
     try {
       const columnDefinitions = columns
@@ -188,29 +241,31 @@ export class SQLiteConnection {
         .join(", ")
 
       const createTableSQL = `CREATE TABLE ${tableName} (${columnDefinitions})`
-      db.exec(createTableSQL)
+      await this.runQuery(db, createTableSQL)
     } finally {
-      db.close()
+      await this.closeDatabase(db)
     }
   }
 
   async dropTable(tableName: string): Promise<void> {
-    const db = this.getDatabase()
+    const db = await this.getDatabase()
 
     try {
-      db.exec(`DROP TABLE IF EXISTS ${tableName}`)
+      const dropTableSQL = `DROP TABLE IF EXISTS ${tableName}`
+      await this.runQuery(db, dropTableSQL)
     } finally {
-      db.close()
+      await this.closeDatabase(db)
     }
   }
 
   async renameTable(oldName: string, newName: string): Promise<void> {
-    const db = this.getDatabase()
+    const db = await this.getDatabase()
 
     try {
-      db.exec(`ALTER TABLE ${oldName} RENAME TO ${newName}`)
+      const renameTableSQL = `ALTER TABLE ${oldName} RENAME TO ${newName}`
+      await this.runQuery(db, renameTableSQL)
     } finally {
-      db.close()
+      await this.closeDatabase(db)
     }
   }
 
@@ -221,21 +276,21 @@ export class SQLiteConnection {
     nullable = true,
     defaultValue?: string,
   ): Promise<void> {
-    const db = this.getDatabase()
+    const db = await this.getDatabase()
 
     try {
       let alterSQL = `ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnType}`
       if (!nullable) alterSQL += " NOT NULL"
       if (defaultValue) alterSQL += ` DEFAULT ${defaultValue}`
 
-      db.exec(alterSQL)
+      await this.runQuery(db, alterSQL)
     } finally {
-      db.close()
+      await this.closeDatabase(db)
     }
   }
 
   async dropColumn(tableName: string, columnName: string): Promise<void> {
-    const db = this.getDatabase()
+    const db = await this.getDatabase()
 
     try {
       // SQLite doesn't support DROP COLUMN directly, so we need to recreate the table
@@ -247,7 +302,7 @@ export class SQLiteConnection {
       }
 
       // Start transaction
-      db.exec("BEGIN TRANSACTION")
+      await this.runQuery(db, "BEGIN TRANSACTION")
 
       try {
         // Create new table without the column
@@ -262,23 +317,23 @@ export class SQLiteConnection {
           .join(", ")
 
         const tempTableName = `${tableName}_temp_${Date.now()}`
-        db.exec(`CREATE TABLE ${tempTableName} (${columnDefs})`)
+        await this.runQuery(db, `CREATE TABLE ${tempTableName} (${columnDefs})`)
 
         // Copy data
         const columnNames = remainingColumns.map((col) => col.name).join(", ")
-        db.exec(`INSERT INTO ${tempTableName} (${columnNames}) SELECT ${columnNames} FROM ${tableName}`)
+        await this.runQuery(db, `INSERT INTO ${tempTableName} (${columnNames}) SELECT ${columnNames} FROM ${tableName}`)
 
         // Drop old table and rename new one
-        db.exec(`DROP TABLE ${tableName}`)
-        db.exec(`ALTER TABLE ${tempTableName} RENAME TO ${tableName}`)
+        await this.runQuery(db, `DROP TABLE ${tableName}`)
+        await this.runQuery(db, `ALTER TABLE ${tempTableName} RENAME TO ${tableName}`)
 
-        db.exec("COMMIT")
+        await this.runQuery(db, "COMMIT")
       } catch (error) {
-        db.exec("ROLLBACK")
+        await this.runQuery(db, "ROLLBACK")
         throw error
       }
     } finally {
-      db.close()
+      await this.closeDatabase(db)
     }
   }
 
