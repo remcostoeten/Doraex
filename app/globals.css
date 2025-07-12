@@ -1,0 +1,509 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme - more sophisticated */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark theme - matching Outerbase exactly */
+    --background: 0 0% 3.9%; /* #0a0a0a */
+    --foreground: 0 0% 98%; /* #fafafa */
+    --card: 0 0% 3.9%; /* #0a0a0a */
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 142 76% 36%; /* #22c55e */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%; /* #262626 */
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%; /* #262626 */
+    --muted-foreground: 0 0% 63.9%; /* #a3a3a3 */
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%; /* #262626 */
+    --input: 0 0% 14.9%;
+    --ring: 142 76% 36%;
+    --radius: 0.375rem;
+  }
+
+  .oled {
+    /* OLED theme */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 0 0% 8%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 8%;
+    --input: 0 0% 8%;
+    --ring: 142 76% 36%;
+    --radius: 0.375rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+/* View Transition API Styles */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+.tab-old {
+  animation: slide-out-left 0.2s ease-in-out;
+}
+
+.tab-new {
+  animation: slide-in-right 0.2s ease-in-out;
+}
+
+.content-old {
+  animation: fade-out 0.15s ease-in-out;
+}
+
+.content-new {
+  animation: fade-in 0.15s ease-in-out;
+}
+
+@keyframes slide-out-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Professional typography */
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0.025em;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.025em;
+}
+
+/* Professional table styles */
+.professional-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.professional-table th {
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.3);
+}
+
+.professional-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid hsl(var(--border));
+  font-size: 0.875rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.professional-table tr:hover {
+  background: hsl(var(--muted) / 0.3);
+}
+
+/* Professional sidebar */
+.professional-sidebar {
+  background: hsl(var(--background));
+  border-right: 1px solid hsl(var(--border));
+}
+
+.professional-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  border-radius: 0.25rem;
+  transition: all 0.15s ease;
+}
+
+.professional-sidebar-item:hover {
+  background: hsl(var(--muted) / 0.5);
+  color: hsl(var(--foreground));
+}
+
+.professional-sidebar-item.active {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  font-weight: 500;
+}
+
+/* Professional buttons */
+.btn-professional {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.btn-professional-primary {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.btn-professional-primary:hover {
+  background: hsl(var(--primary) / 0.9);
+}
+
+.btn-professional-secondary {
+  background: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+.btn-professional-secondary:hover {
+  background: hsl(var(--secondary) / 0.8);
+}
+
+.btn-professional-ghost {
+  color: hsl(var(--muted-foreground));
+}
+
+.btn-professional-ghost:hover {
+  background: hsl(var(--muted) / 0.5);
+  color: hsl(var(--foreground));
+}
+
+/* Fun empty state animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes tooltip-out {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-8px) scale(0.95);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
+/* Gradient backgrounds for empty states */
+.empty-state-gradient {
+  background: radial-gradient(circle at 50% 50%, hsl(var(--primary) / 0.05) 0%, transparent 50%);
+}
+
+.empty-state-pattern {
+  background-image: radial-gradient(circle at 1px 1px, hsl(var(--muted-foreground) / 0.1) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+/* Hover effects for empty state buttons */
+.empty-state-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.empty-state-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.2);
+}
+
+/* Circuit board pattern for database cards */
+.outerbase-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.outerbase-line {
+  stroke: hsl(var(--border));
+  stroke-width: 1;
+  fill: none;
+  opacity: 0.3;
+  transition: all 0.3s ease;
+}
+
+.outerbase-corner {
+  fill: hsl(var(--muted-foreground));
+  opacity: 0.2;
+  transition: all 0.3s ease;
+}
+
+.outerbase-node {
+  fill: hsl(var(--primary));
+  opacity: 0.4;
+  transition: all 0.3s ease;
+}
+
+.outerbase-card:hover .outerbase-line {
+  stroke: hsl(var(--primary));
+  opacity: 0.6;
+}
+
+.outerbase-card:hover .outerbase-corner {
+  fill: hsl(var(--primary));
+  opacity: 0.4;
+}
+
+.outerbase-card:hover .outerbase-node {
+  fill: hsl(var(--primary));
+  opacity: 0.8;
+}
+
+/* Custom tooltip styles with bezier curves */
+.sidebar-tooltip {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-8px) scale(0.95);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: hsl(var(--popover));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 10px 15px -3px hsl(var(--foreground) / 0.1), 0 4px 6px -2px hsl(var(--foreground) / 0.05);
+  backdrop-filter: blur(8px);
+  max-width: 200px;
+}
+
+.sidebar-tooltip.show {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.sidebar-tooltip::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 6px 6px 0;
+  border-color: transparent hsl(var(--border)) transparent transparent;
+}
+
+.sidebar-tooltip::after {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 5px 5px 0;
+  border-color: transparent hsl(var(--popover)) transparent transparent;
+}
+
+.sidebar-tooltip-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: hsl(var(--popover-foreground));
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-tooltip-description {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.4;
+}
+
+/* Icon sidebar button hover effects */
+.sidebar-icon-button {
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-icon-button:hover {
+  transform: translateY(-1px);
+}
+
+.sidebar-icon-button:active {
+  transform: translateY(0);
+}
+
+/* Tab styles */
+.tab-drag-preview {
+  background: hsl(var(--primary) / 0.1);
+  border: 2px dashed hsl(var(--primary));
+}
+
+.tab-drag-over {
+  background: hsl(var(--primary) / 0.05);
+}
+
+/* Tab transition styles */
+.tab-enter {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.tab-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.2s ease-out;
+}
+
+.tab-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.tab-exit-active {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.2s ease-in;
+}
