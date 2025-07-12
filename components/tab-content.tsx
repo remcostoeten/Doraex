@@ -3,7 +3,8 @@
 import { useTabs } from "@/hooks/use-tabs"
 import { ProfessionalDataTable } from "@/components/professional-data-table"
 import { ProfessionalQueryEditor } from "@/components/professional-query-editor"
-import { HomeView } from "@/components/home-view"
+import { HomeView } from "@/views/home-view"
+import { ProfileView } from "@/views/profile-view"
 import { EmptyAnalyticsState, EmptySchemaState, EmptySettingsState } from "@/components/empty-states"
 
 export function TabContent() {
@@ -36,6 +37,8 @@ export function TabContent() {
         return <EmptyAnalyticsState />
       case "settings":
         return <EmptySettingsState />
+      case "profile":
+        return <ProfileView />
       default:
         return (
           <div className="h-full flex items-center justify-center">

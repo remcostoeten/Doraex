@@ -5,7 +5,7 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 export interface Tab {
   id: string
   title: string
-  type: "table" | "query" | "home" | "schema" | "analytics" | "settings"
+  type: "table" | "query" | "home" | "schema" | "analytics" | "settings" | "profile"
   content?: any
   isClosable: boolean
   isDirty?: boolean

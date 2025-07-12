@@ -10,8 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Search, Plus, LogOut, Database } from "lucide-react"
+import { Search, Plus, LogOut, Database, User, Settings } from "lucide-react"
 import { signOut } from "next-auth/react"
+import { useTabs } from "@/hooks/use-tabs"
 
 interface ProfessionalTopBarProps {
   onAddTab: (tab: { id: string; title: string; type: string }) => void
@@ -24,6 +25,8 @@ interface ProfessionalTopBarProps {
 }
 
 export function ProfessionalTopBar({ onAddTab, user }: ProfessionalTopBarProps) {
+  const { openTab } = useTabs()
+  
   const handleConnectDatabase = () => {
     onAddTab({
       id: `connect-${Date.now()}`,
@@ -34,6 +37,22 @@ export function ProfessionalTopBar({ onAddTab, user }: ProfessionalTopBarProps) 
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" })
+  }
+
+  const handleProfileClick = () => {
+    openTab({
+      title: "Profile",
+      type: "profile",
+      isClosable: false,
+    })
+  }
+
+  const handleSettingsClick = () => {
+    openTab({
+      title: "Settings",
+      type: "settings",
+      isClosable: false,
+    })
   }
 
   const getUserInitials = () => {
@@ -120,10 +139,12 @@ export function ProfessionalTopBar({ onAddTab, user }: ProfessionalTopBarProps) 
               </div>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleProfileClick}>
+              <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSettingsClick}>
+              <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

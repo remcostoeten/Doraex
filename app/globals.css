@@ -39,8 +39,8 @@
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 14.9%; /* #262626 */
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%; /* #262626 */
-    --muted-foreground: 0 0% 63.9%; /* #a3a3a3 */
+    --muted: 0 0% 15%; /* #262626 */
+    --muted-foreground: 0 0% 70%; /* slightly lighter */
     --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
@@ -338,6 +338,60 @@
   animation: rotate-slow 20s linear infinite;
 }
 
+/* Glass morphism styles */
+.glass {
+  @apply backdrop-blur-glass bg-white/5 border border-white/10;
+}
+
+.glass-sm {
+  @apply backdrop-blur-glass-sm bg-white/[0.03] border border-white/[0.08];
+}
+
+.glass-lg {
+  @apply backdrop-blur-glass-lg bg-white/[0.07] border border-white/[0.12];
+}
+
+/* Enhanced dark theme card styles */
+.dark .card-glass,
+.oled .card-glass {
+  @apply bg-white/[0.02] backdrop-blur-glass border-white/[0.06];
+}
+
+.dark .card-glass:hover,
+.oled .card-glass:hover {
+  @apply bg-white/[0.04] border-white/[0.08] shadow-glow-sm;
+}
+
+/* Accessible focus states */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}
+
+/* Enhanced button focus states with proper contrast */
+.btn-focus {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all;
+}
+
+/* Muted background variations for dark theme */
+.bg-muted-glass {
+  @apply bg-muted/30 backdrop-blur-xs border border-muted/50;
+}
+
+.dark .bg-muted-glass,
+.oled .bg-muted-glass {
+  @apply bg-white/[0.03] backdrop-blur-xs border-white/[0.08];
+}
+
+/* Card hover states with proper contrast */
+.card-hover {
+  @apply transition-all duration-300 hover:bg-muted/10 hover:border-muted/30;
+}
+
+.dark .card-hover,
+.oled .card-hover {
+  @apply hover:bg-white/[0.05] hover:border-white/[0.1] hover:shadow-glow-sm;
+}
+
 /* Gradient backgrounds for empty states */
 .empty-state-gradient {
   background: radial-gradient(circle at 50% 50%, hsl(var(--primary) / 0.05) 0%, transparent 50%);
@@ -506,4 +560,123 @@
   opacity: 0;
   transform: translateX(-20px);
   transition: all 0.2s ease-in;
+}
+
+/* New animations following animate-* convention */
+@keyframes animate-slide-smooth {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes animate-testimonial-rotate {
+  0% {
+    transform: rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+  25% {
+    transform: rotateY(90deg) scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: rotateY(180deg) scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: rotateY(270deg) scale(0.95);
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotateY(360deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Applying the new animations */
+.animate-slide-smooth {
+  animation: animate-slide-smooth 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-testimonial-rotate {
+  animation: animate-testimonial-rotate 8s ease-in-out infinite;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Glass morphism variable utilities */
+.glass-util {
+  --glass-blur: 12px;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-util-dark {
+  --glass-blur: 16px;
+  --glass-bg: rgba(17, 25, 40, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.125);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-util-light {
+  --glass-blur: 8px;
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
+  
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Shared card styling with meaningful class names */
+.shared-card {
+  @apply relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200;
+}
+
+.shared-card-elevated {
+  @apply shared-card shadow-md hover:shadow-lg;
+}
+
+.shared-card-interactive {
+  @apply shared-card cursor-pointer hover:border-primary/20 hover:shadow-md;
+}
+
+.shared-card-glass {
+  @apply shared-card glass-util;
+}
+
+.dark .shared-card-glass {
+  @apply glass-util-dark;
+}
+
+.shared-card-header {
+  @apply flex items-center justify-between p-6 pb-4;
+}
+
+.shared-card-content {
+  @apply p-6 pt-0;
+}
+
+.shared-card-footer {
+  @apply flex items-center justify-between border-t bg-muted/50 p-4;
 }

@@ -38,7 +38,7 @@ export function ProfessionalIconSidebar({ activeSection, onSectionChange }: Prof
   const bottomItems = [
     { id: "settings", icon: Settings, label: "Settings", description: "Application settings" },
     { id: "help", icon: HelpCircle, label: "Help", description: "Documentation and support" },
-    { id: "profile", icon: User, label: "Profile", description: "User profile and account" },
+    { id: "profile", icon: User, label: "Profile", description: "View and edit your profile" },
   ]
 
   const showTooltip = (event: React.MouseEvent, item: { label: string; description: string }) => {

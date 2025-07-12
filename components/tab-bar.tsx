@@ -116,7 +116,7 @@ export function TabBar() {
 
   return (
     <>
-      <div className="flex items-center bg-background border-b border-border h-10">
+      <div className="flex items-center bg-gray-100 dark:bg-zinc-900/50 border-b border-border h-10">
         {/* Tabs Container */}
         <MotionList className="flex items-end flex-1 overflow-x-auto px-2">
           {tabs.map((tab, index) => (
@@ -136,8 +136,8 @@ export function TabBar() {
                 min-w-0 max-w-48 group text-sm
                 ${
                   activeTabId === tab.id
-                    ? "text-foreground rounded-t-md z-10"
-                    : "bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground rounded-t-md border-t border-l border-r border-transparent hover:border-border/50"
+                    ? "bg-white dark:bg-zinc-800 text-foreground rounded-t-md z-10 border-t border-l border-r border-border shadow-sm"
+                    : "bg-black/20 dark:bg-black/40 text-muted-foreground hover:bg-black/30 dark:hover:bg-black/50 hover:text-foreground rounded-t-md border-t border-l border-r border-transparent hover:border-border/50"
                 }
                 ${dragOverIndex === index ? "bg-primary/10" : ""}
                 ${draggedTabIndex === index ? "opacity-50" : ""}

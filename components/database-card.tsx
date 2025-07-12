@@ -90,10 +90,10 @@ export function DatabaseCard({ database, onEdit, onDelete }: DatabaseCardProps) 
       </div>
 
       {/* Main card */}
-      <div className="relative bg-card border border-border rounded-lg p-6 transition-all duration-300 group-hover:border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/10 group-hover:bg-card/95">
+      <div className="relative bg-card/90 dark:bg-white/[0.02] backdrop-blur-glass border border-border/50 dark:border-white/[0.06] rounded-lg p-6 transition-all duration-300 group-hover:border-primary/30 dark:group-hover:border-primary/20 group-hover:shadow-glow dark:group-hover:shadow-glow-sm group-hover:bg-card dark:group-hover:bg-white/[0.04] focus-ring">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-muted rounded-lg transition-colors duration-300 group-hover:bg-primary/10">
+            <div className="p-2 bg-muted/50 dark:bg-white/[0.05] backdrop-blur-xs rounded-lg transition-all duration-300 group-hover:bg-primary/10 dark:group-hover:bg-primary/20 group-hover:shadow-sm">
               {getTypeIcon(database.type)}
             </div>
             <div>

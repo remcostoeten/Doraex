@@ -3,14 +3,55 @@
 import type React from "react"
 
 import { useState } from "react"
-import { signIn } from "next-auth/react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AnimatedCard, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/animated-card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, LogIn, UserPlus, Database, AlertCircle, CheckCircle } from "lucide-react"
+import { OAuthButtons } from "@/components/oauth-buttons"
+import { SignIn } from "@/components/ui/sign-in"
+
+type TSignInWrapperProps = {
+  onError?: (error: string) => void;
+  onSuccess?: () => void;
+};
+
+function SignInWrapper({ onError, onSuccess }: TSignInWrapperProps) {
+  return (
+    <div className="signin-wrapper">
+      <style jsx global>{`
+        .signin-wrapper > div {
+          min-height: auto !important;
+          background: transparent !important;
+        }
+        .signin-wrapper > div > div {
+          max-width: 100% !important;
+          padding: 0 !important;
+        }
+        .signin-wrapper > div > div > div {
+          grid-template-columns: 1fr !important;
+        }
+        .signin-wrapper > div > div > div > div:last-child {
+          display: none !important;
+        }
+        .signin-wrapper > div > div > div > div > div:first-child {
+          display: none !important;
+        }
+        .signin-wrapper > div > div > div > div > div:last-child {
+          background: transparent !important;
+          backdrop-filter: none !important;
+          padding: 0 !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+      `}</style>
+      <SignIn callbackUrl="/" />
+    </div>
+  );
+}
 
 export function AuthForm() {
   const [activeTab, setActiveTab] = useState("login")
@@ -33,26 +74,6 @@ export function AuthForm() {
     password: "",
     confirmPassword: "",
   })
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
-
-    const result = await signIn("credentials", {
-      identifier: loginForm.identifier,
-      password: loginForm.password,
-      redirect: false,
-    })
-
-    setIsLoading(false)
-
-    if (result?.error) {
-      setError("Invalid email/username or password")
-    } else {
-      window.location.reload()
-    }
-  }
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -132,7 +153,7 @@ export function AuthForm() {
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <div className="w-full max-w-md space-y-4">
         {/* Database initialization */}
-        <Card className="border-dashed">
+        <AnimatedCard className="border-dashed" delay={0}>
           <CardHeader className="text-center pb-3">
             <CardTitle className="text-lg flex items-center justify-center gap-2">
               <Database className="h-5 w-5" />
@@ -141,34 +162,57 @@ export function AuthForm() {
             <CardDescription className="text-sm">Initialize the user database before creating accounts</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button
-              onClick={initializeDatabase}
-              disabled={isInitializingDb}
-              className="w-full bg-transparent"
-              variant="outline"
+            <motion.div
             >
-              {isInitializingDb ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Initializing...
-                </>
-              ) : (
-                <>
-                  <Database className="mr-2 h-4 w-4" />
-                  Initialize Database
-                </>
-              )}
-            </Button>
+              <Button
+                onClick={initializeDatabase}
+                disabled={isInitializingDb}
+                className="w-full bg-transparent"
+                variant="outline"
+              >
+                {isInitializingDb ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Initializing...
+                  </>
+                ) : (
+                  <>
+                    <Database className="mr-2 h-4 w-4" />
+                    Initialize Database
+                  </>
+                )}
+              </Button>
+            </motion.div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
         {/* Auth form */}
-        <Card>
+        <AnimatedCard
+          delay={0.1}
+          variants={{
+            initial: { opacity: 0, y: 20 },
+            animate: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: 20 }
+          }}
+        >
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Welcome to Outerbase</CardTitle>
             <CardDescription>Sign in to manage your databases</CardDescription>
           </CardHeader>
           <CardContent>
+            <OAuthButtons disabled={isLoading || isInitializingDb} />
+            
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Sign In</TabsTrigger>
@@ -176,120 +220,124 @@ export function AuthForm() {
               </TabsList>
 
               <TabsContent value="login" className="space-y-4 mt-4">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div>
-                    <Label htmlFor="identifier">Email or Username</Label>
-                    <Input
-                      id="identifier"
-                      type="text"
-                      placeholder="Enter your email or username"
-                      value={loginForm.identifier}
-                      onChange={(e) => setLoginForm((prev) => ({ ...prev, identifier: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="Enter your password"
-                      value={loginForm.password}
-                      onChange={(e) => setLoginForm((prev) => ({ ...prev, password: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Signing In...
-                      </>
-                    ) : (
-                      <>
-                        <LogIn className="mr-2 h-4 w-4" />
-                        Sign In
-                      </>
-                    )}
-                  </Button>
-                </form>
+                <SignInWrapper />
               </TabsContent>
 
               <TabsContent value="register" className="space-y-4 mt-4">
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div>
-                    <Label htmlFor="reg-username">Username</Label>
-                    <Input
-                      id="reg-username"
-                      type="text"
-                      placeholder="Choose a username"
-                      value={registerForm.username}
-                      onChange={(e) => setRegisterForm((prev) => ({ ...prev, username: e.target.value }))}
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      3-20 characters, letters, numbers, and underscores only
-                    </p>
-                  </div>
-                  <div>
-                    <Label htmlFor="reg-email">Email</Label>
-                    <Input
-                      id="reg-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={registerForm.email}
-                      onChange={(e) => setRegisterForm((prev) => ({ ...prev, email: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="reg-name">Full Name</Label>
-                    <Input
-                      id="reg-name"
-                      type="text"
-                      placeholder="Enter your full name"
-                      value={registerForm.name}
-                      onChange={(e) => setRegisterForm((prev) => ({ ...prev, name: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="reg-password">Password</Label>
-                    <Input
-                      id="reg-password"
-                      type="password"
-                      placeholder="Create a password"
-                      value={registerForm.password}
-                      onChange={(e) => setRegisterForm((prev) => ({ ...prev, password: e.target.value }))}
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">At least 6 characters</p>
-                  </div>
-                  <div>
-                    <Label htmlFor="reg-confirm-password">Confirm Password</Label>
-                    <Input
-                      id="reg-confirm-password"
-                      type="password"
-                      placeholder="Confirm your password"
-                      value={registerForm.confirmPassword}
-                      onChange={(e) => setRegisterForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating Account...
-                      </>
-                    ) : (
-                      <>
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        Create Account
-                      </>
-                    )}
-                  </Button>
-                </form>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key="register"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <form onSubmit={handleRegister} className="space-y-4">
+                      <div>
+                        <Label htmlFor="reg-username">Username</Label>
+                        <motion.div
+                          whileFocus={{ scale: 1.02 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <Input
+                            id="reg-username"
+                            type="text"
+                            placeholder="Choose a username"
+                            value={registerForm.username}
+                            onChange={(e) => setRegisterForm((prev) => ({ ...prev, username: e.target.value }))}
+                            required
+                          />
+                        </motion.div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          3-20 characters, letters, numbers, and underscores only
+                        </p>
+                      </div>
+                      <div>
+                        <Label htmlFor="reg-email">Email</Label>
+                        <motion.div
+                          whileFocus={{ scale: 1.02 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <Input
+                            id="reg-email"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={registerForm.email}
+                            onChange={(e) => setRegisterForm((prev) => ({ ...prev, email: e.target.value }))}
+                            required
+                          />
+                        </motion.div>
+                      </div>
+                      <div>
+                        <Label htmlFor="reg-name">Full Name</Label>
+                        <motion.div
+                          whileFocus={{ scale: 1.02 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <Input
+                            id="reg-name"
+                            type="text"
+                            placeholder="Enter your full name"
+                            value={registerForm.name}
+                            onChange={(e) => setRegisterForm((prev) => ({ ...prev, name: e.target.value }))}
+                            required
+                          />
+                        </motion.div>
+                      </div>
+                      <div>
+                        <Label htmlFor="reg-password">Password</Label>
+                        <motion.div
+                          whileFocus={{ scale: 1.02 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <Input
+                            id="reg-password"
+                            type="password"
+                            placeholder="Create a password"
+                            value={registerForm.password}
+                            onChange={(e) => setRegisterForm((prev) => ({ ...prev, password: e.target.value }))}
+                            required
+                          />
+                        </motion.div>
+                        <p className="text-xs text-muted-foreground mt-1">At least 6 characters</p>
+                      </div>
+                      <div>
+                        <Label htmlFor="reg-confirm-password">Confirm Password</Label>
+                        <motion.div
+                          whileFocus={{ scale: 1.02 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <Input
+                            id="reg-confirm-password"
+                            type="password"
+                            placeholder="Confirm your password"
+                            value={registerForm.confirmPassword}
+                            onChange={(e) => setRegisterForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                            required
+                          />
+                        </motion.div>
+                      </div>
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Button type="submit" className="w-full" disabled={isLoading}>
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Creating Account...
+                            </>
+                          ) : (
+                            <>
+                              <UserPlus className="mr-2 h-4 w-4" />
+                              Create Account
+                            </>
+                          )}
+                        </Button>
+                      </motion.div>
+                    </form>
+                  </motion.div>
+                </AnimatePresence>
               </TabsContent>
             </Tabs>
 
@@ -307,7 +355,7 @@ export function AuthForm() {
               </Alert>
             )}
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
     </div>
   )

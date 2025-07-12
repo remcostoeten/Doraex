@@ -90,6 +90,20 @@ const config: Config = {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
+  		},
+  		backdropBlur: {
+  			xs: '2px',
+  			glass: '8px',
+  			'glass-sm': '4px',
+  			'glass-lg': '12px'
+  		},
+  		boxShadow: {
+  			'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+  			'glass-sm': '0 4px 16px 0 rgba(0, 0, 0, 0.27)',
+  			'glass-lg': '0 12px 48px 0 rgba(0, 0, 0, 0.47)',
+  			'glow': '0 0 20px rgba(34, 197, 94, 0.2)',
+  			'glow-sm': '0 0 10px rgba(34, 197, 94, 0.15)',
+  			'glow-lg': '0 0 30px rgba(34, 197, 94, 0.3)'
   		}
   	}
   },

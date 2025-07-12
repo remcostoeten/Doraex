@@ -2,12 +2,12 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DataTable } from "@/components/data-table"
-import { SchemaView } from "@/components/schema-view"
+import { SchemaView } from "@/views/schema-view"
 import { SqlEditor } from "@/components/sql-editor"
 import { ExportImport } from "@/components/export-import"
-import { AnalyticsView } from "@/components/analytics-view"
-import { SettingsView } from "@/components/settings-view"
-import { HomeView } from "@/components/home-view"
+import { AnalyticsView } from "@/views/analytics-view"
+import { SettingsView } from "@/views/settings-view"
+import { HomeView } from "@/views/home-view"
 
 interface MainContentProps {
   selectedTable: string
