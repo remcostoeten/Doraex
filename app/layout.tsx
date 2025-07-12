@@ -5,6 +5,7 @@ import './globals.css'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth-options'
 import { Providers } from '@/components/providers'
+import { MotionLayoutProvider } from '@/lib/motion'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -24,7 +25,9 @@ export default async function RootLayout({
 		<html lang='en'>
 			<body className={inter.className}>
 				<Providers session={session}>
-					{children}
+					<MotionLayoutProvider>
+						{children}
+					</MotionLayoutProvider>
 				</Providers>
 			</body>
 		</html>

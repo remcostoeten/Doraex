@@ -2,18 +2,15 @@
 
 import { useSession } from "next-auth/react"
 import { AuthForm } from "@/components/auth-form"
-import { ProfessionalTopBar } from "@/components/professional-top-bar"
-import { ProfessionalSidebar } from "@/components/professional-sidebar"
 import { ProfessionalIconSidebar } from "@/components/professional-icon-sidebar"
-import { TabContent } from "@/components/tab-content"
+import { ProfessionalSidebar } from "@/components/professional-sidebar"
 import { TabBar } from "@/components/tab-bar"
-import { useTabs } from "@/hooks/use-tabs"
+import { TabContent } from "@/components/tab-content"
 import { useState } from "react"
 
 export default function Home() {
   const { data: session, status } = useSession()
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const { tabs, activeTabId, openTab, closeTab, setActiveTab } = useTabs()
+  const [activeSection, setActiveSection] = useState("tables")
 
   // Show loading state
   if (status === "loading") {
@@ -31,28 +28,21 @@ export default function Home() {
 
   // Show main application if authenticated
   return (
-    <div className="flex h-screen bg-gray-50">
-      {sidebarCollapsed ? (
-        <ProfessionalIconSidebar
-          onExpand={() => setSidebarCollapsed(false)}
-          activeTab={activeTabId}
-          onTabChange={setActiveTab}
-        />
-      ) : (
-        <ProfessionalSidebar
-          onCollapse={() => setSidebarCollapsed(true)}
-          activeTab={activeTabId}
-          onTabChange={setActiveTab}
-        />
-      )}
+    <div className="flex h-screen bg-background">
+      {/* Icon Sidebar Navigation */}
+      <ProfessionalIconSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+      
+      {/* Secondary Sidebar (only for tables section) */}
+      <ProfessionalSidebar activeSection={activeSection} />
 
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <ProfessionalTopBar onAddTab={openTab} user={session.user} />
+        {/* Tab Bar */}
+        <TabBar />
 
-        <TabBar tabs={tabs} activeTab={activeTabId} onTabChange={setActiveTab} onTabClose={closeTab} />
-
+        {/* Tab Content */}
         <div className="flex-1 overflow-hidden">
-          <TabContent tabs={tabs} activeTab={activeTabId} onAddTab={openTab} />
+          <TabContent />
         </div>
       </div>
     </div>

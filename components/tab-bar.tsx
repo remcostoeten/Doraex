@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useRef } from "react"
+import { MotionTab, MotionList } from "@/lib/motion"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -117,10 +118,12 @@ export function TabBar() {
     <>
       <div className="flex items-center bg-background border-b border-border h-10">
         {/* Tabs Container */}
-        <div className="flex items-end flex-1 overflow-x-auto px-2">
+        <MotionList className="flex items-end flex-1 overflow-x-auto px-2">
           {tabs.map((tab, index) => (
-            <div
+            <MotionTab
               key={tab.id}
+              layoutId={`tab-${tab.id}`}
+              isActive={activeTabId === tab.id}
               draggable
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={(e) => handleDragOver(e, index)}
@@ -130,10 +133,10 @@ export function TabBar() {
               onDragEnd={handleDragEnd}
               className={`
                 relative flex items-center gap-2 px-3 py-1.5 cursor-pointer select-none
-                transition-all duration-150 min-w-0 max-w-48 group text-sm
+                min-w-0 max-w-48 group text-sm
                 ${
                   activeTabId === tab.id
-                    ? "bg-background text-foreground border-t border-l border-r border-border rounded-t-md -mb-px z-10"
+                    ? "text-foreground rounded-t-md z-10"
                     : "bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground rounded-t-md border-t border-l border-r border-transparent hover:border-border/50"
                 }
                 ${dragOverIndex === index ? "bg-primary/10" : ""}
@@ -141,7 +144,6 @@ export function TabBar() {
                 ${index > 0 ? "ml-1" : ""}
               `}
               onClick={() => handleTabClick(tab.id)}
-              style={{ viewTransitionName: `tab-${tab.id}` }}
             >
               {getTabIcon(tab.type)}
               <span className="truncate flex-1 min-w-0 font-medium">
@@ -156,9 +158,9 @@ export function TabBar() {
                   <X className="h-3 w-3" />
                 </button>
               )}
-            </div>
+            </MotionTab>
           ))}
-        </div>
+        </MotionList>
 
         {/* New Tab Button */}
         <div className="flex items-center px-2">

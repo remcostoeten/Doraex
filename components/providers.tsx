@@ -1,3 +1,5 @@
+"use client"
+
 import { ThemeProvider } from 'next-themes'
 import { SessionProvider } from 'next-auth/react'
 import { ConnectionsProvider } from '@/hooks/use-connections'

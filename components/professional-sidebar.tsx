@@ -1,5 +1,6 @@
 "use client"
 
+import { MotionSidebar, MotionListItem, MotionCollapsible } from "@/lib/motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -64,7 +65,10 @@ export function ProfessionalSidebar({ activeSection }: ProfessionalSidebarProps)
   }
 
   return (
-    <div className="w-64 bg-background border-r border-border flex flex-col h-full">
+    <MotionSidebar
+      isExpanded={activeSection === "tables"}
+      className="w-64 bg-background border-r border-border flex flex-col h-full"
+    >
       {/* Header */}
       <div className="p-3 border-b border-border">
         <div className="flex items-center justify-between">
@@ -122,24 +126,30 @@ export function ProfessionalSidebar({ activeSection }: ProfessionalSidebarProps)
                   </Badge>
                 </Button>
               </CollapsibleTrigger>
-              <CollapsibleContent className="ml-3">
+              <MotionCollapsible isOpen={expandedDatabases.includes("main")} className="ml-3">
                 {filteredTables.map((table) => (
-                  <Button
+                  <MotionListItem
                     key={table.name}
-                    variant={isTableActive(table.name) ? "secondary" : "ghost"}
-                    className="w-full justify-start h-7 px-2 mb-1 text-sm font-normal hover:bg-muted/50"
-                    onClick={() => handleTableSelect(table.name)}
+                    layoutId={`table-${table.name}`}
+                    isActive={isTableActive(table.name)}
+                    className="mb-1"
                   >
-                    <Table className="h-4 w-4 mr-2" />
-                    <span className="flex-1 text-left">{table.name}</span>
-                    {table.rowCount && (
-                      <Badge variant="outline" className="text-xs px-1">
-                        {table.rowCount.toLocaleString()}
-                      </Badge>
-                    )}
-                  </Button>
+                    <Button
+                      variant={isTableActive(table.name) ? "secondary" : "ghost"}
+                      className="w-full justify-start h-7 px-2 text-sm font-normal hover:bg-muted/50"
+                      onClick={() => handleTableSelect(table.name)}
+                    >
+                      <Table className="h-4 w-4 mr-2" />
+                      <span className="flex-1 text-left">{table.name}</span>
+                      {table.rowCount && (
+                        <Badge variant="outline" className="text-xs px-1">
+                          {table.rowCount.toLocaleString()}
+                        </Badge>
+                      )}
+                    </Button>
+                  </MotionListItem>
                 ))}
-              </CollapsibleContent>
+              </MotionCollapsible>
             </Collapsible>
           )}
         </div>
@@ -161,6 +171,6 @@ export function ProfessionalSidebar({ activeSection }: ProfessionalSidebarProps)
         </div>
       )}
       <ConnectionCreationModal open={isConnectionModalOpen} onOpenChange={setIsConnectionModalOpen} />
-    </div>
+    </MotionSidebar>
   )
 }
