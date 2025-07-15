@@ -124,6 +124,71 @@ function createAuthApi() {
     });
   });
 
+  // Password reset request endpoint
+  app.post('/reset-password', async (c) => {
+    try {
+      const body = await c.req.json();
+      const { email } = body;
+
+      if (!email) {
+        return c.json({ error: 'Email is required' }, 400);
+      }
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return c.json({ error: 'Invalid email format' }, 400);
+      }
+
+      const result = await authService.requestPasswordReset(email);
+
+      if (!result.success) {
+        return c.json({ error: result.error }, 400);
+      }
+
+      return c.json({
+        success: true,
+        message: result.message,
+        // Include token in development only
+        ...(result.token && { token: result.token })
+      });
+    } catch (error) {
+      console.error('Password reset request error:', error);
+      return c.json({ error: 'Internal server error' }, 500);
+    }
+  });
+
+  // Password reset confirmation endpoint
+  app.post('/reset-password-confirm', async (c) => {
+    try {
+      const body = await c.req.json();
+      const { token, password } = body;
+
+      if (!token || !password) {
+        return c.json({ error: 'Token and password are required' }, 400);
+      }
+
+      // Basic password validation
+      if (password.length < 8) {
+        return c.json({ error: 'Password must be at least 8 characters long' }, 400);
+      }
+
+      const result = await authService.resetPassword(token, password);
+
+      if (!result.success) {
+        return c.json({ error: result.error }, 400);
+      }
+
+      return c.json({
+        success: true,
+        message: result.message
+      });
+    } catch (error) {
+      console.error('Password reset confirmation error:', error);
+      return c.json({ error: 'Internal server error' }, 500);
+    }
+  });
+
   // Get current user endpoint
   app.get('/me', async (c) => {
     const authHeader = c.req.header('Authorization');
@@ -139,19 +204,27 @@ function createAuthApi() {
       return c.json({ error: 'Invalid or expired token' }, 401);
     }
 
-    // In a real application, you would fetch the user from the database
-    const user = {
-      id: tokenPayload.userId,
-      email: tokenPayload.email,
-      name: 'User', // Mock name
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    return c.json({
-      success: true,
-      user
-    });
+    try {
+      // Create a temporary UserRepository instance to fetch user data
+      const { UserRepository } = await import('../auth/user-repository');
+      const userRepository = new UserRepository();
+      const userRecord = await userRepository.findById(tokenPayload.userId);
+      
+      if (!userRecord) {
+        return c.json({ error: 'User not found' }, 404);
+      }
+      
+      // Remove password hash from response
+      const { password_hash, ...user } = userRecord;
+      
+      return c.json({
+        success: true,
+        user
+      });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      return c.json({ error: 'Failed to fetch user data' }, 500);
+    }
   });
 
   return app;

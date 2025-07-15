@@ -14,9 +14,17 @@
     showDropdown = false;
   }
 
-  async function handleLogout() {
-    await authStore.logout();
+  async function handleLogout(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
     closeDropdown();
+    console.log('Attempting to logout...');
+    try {
+      await authStore.logout();
+      console.log('Logout successful');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   }
 
   function getInitials(name: string): string {

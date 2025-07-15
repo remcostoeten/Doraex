@@ -88,8 +88,9 @@ async function createConnection(type: 'sqlite' | 'postgres', config: TConnection
     throw new Error('Unsupported database type')
   }
   
-  // Save to database (skip for system connection to avoid recursion)
-  if (saveToDb && connectionId !== SYSTEM_CONNECTION_ID && name) {
+  // Save to database (skip for system connection and SQLite connections)
+  // SQLite connections will be stored in localStorage on the frontend
+  if (saveToDb && connectionId !== SYSTEM_CONNECTION_ID && name && type !== 'sqlite') {
     await saveConnectionToDB(connectionId, name, type, config)
   }
 }

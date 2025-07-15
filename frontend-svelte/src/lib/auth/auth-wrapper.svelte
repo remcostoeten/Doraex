@@ -8,11 +8,12 @@
   export let initialMode: 'login' | 'register' = 'login';
   
   let currentMode = initialMode;
+  let mounted = false;
   
   $: authState = $authStore;
 
   onMount(() => {
-    authStore.initialize();
+    mounted = true;
   });
 
   function switchMode() {
@@ -22,7 +23,7 @@
 </script>
 
 <!-- Vercel-style Auth Page -->
-<div class="min-h-screen bg-black flex flex-col">
+<div class="min-h-screen bg-black flex flex-col" class:fade-in={mounted}>
   <!-- Subtle Grid Background -->
   <div class="absolute inset-0 bg-[linear-gradient(to_right,#1a1a1a_1px,transparent_1px),linear-gradient(to_bottom,#1a1a1a_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20"></div>
   
@@ -75,7 +76,7 @@
             <Button 
               variant="ghost"
               class="mt-2 text-white hover:bg-gray-900 font-medium"
-              on:click={switchMode}
+              href={currentMode === 'login' ? '/register' : '/login'}
             >
               {currentMode === 'login' ? 'Create account' : 'Sign in'}
             </Button>
@@ -103,3 +104,20 @@
     </div>
   </div>
 </div>
+
+<style>
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

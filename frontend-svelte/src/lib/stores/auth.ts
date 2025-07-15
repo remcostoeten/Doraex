@@ -6,7 +6,7 @@ function createAuthStore() {
     user: null,
     tokens: null,
     isAuthenticated: false,
-    isLoading: false,
+    isLoading: true,
     error: null
   };
 
@@ -37,7 +37,7 @@ function createAuthStore() {
   }
 
   function clearAuth() {
-    set(initialState);
+    set({ ...initialState, isLoading: false });
     localStorage.removeItem('auth_tokens');
     localStorage.removeItem('auth_user');
   }
@@ -106,14 +106,16 @@ function createAuthStore() {
   }
 
   async function logout() {
-    const state = get({ subscribe });
+    let currentState: TAuthState;
+    const unsubscribe = subscribe(state => currentState = state);
+    unsubscribe();
     
-    if (state.tokens?.access_token) {
+    if (currentState.tokens?.access_token) {
       try {
         await fetch(`${API_BASE_URL}/logout`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${state.tokens.access_token}`,
+            'Authorization': `Bearer ${currentState.tokens.access_token}`,
             'Content-Type': 'application/json'
           }
         });
@@ -126,9 +128,11 @@ function createAuthStore() {
   }
 
   async function refreshToken() {
-    const state = get({ subscribe });
+    let currentState: TAuthState;
+    const unsubscribe = subscribe(state => currentState = state);
+    unsubscribe();
     
-    if (!state.tokens?.refresh_token) {
+    if (!currentState.tokens?.refresh_token) {
       clearAuth();
       return { success: false, error: 'No refresh token available' };
     }
@@ -139,7 +143,7 @@ function createAuthStore() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ refresh_token: state.tokens.refresh_token })
+        body: JSON.stringify({ refresh_token: currentState.tokens.refresh_token })
       });
 
       const data = await response.json();
@@ -148,7 +152,7 @@ function createAuthStore() {
         throw new Error(data.message || 'Token refresh failed');
       }
 
-      setAuthenticated(state.user!, data.tokens);
+      setAuthenticated(currentState.user!, data.tokens);
       return { success: true };
     } catch (error) {
       clearAuth();
@@ -218,7 +222,9 @@ function createAuthStore() {
     }
   }
 
-  function initialize() {
+  async function initialize() {
+    setLoading(true);
+    
     const storedTokens = localStorage.getItem('auth_tokens');
     const storedUser = localStorage.getItem('auth_user');
     
@@ -231,12 +237,14 @@ function createAuthStore() {
         if (tokenExpirationTime > Date.now()) {
           setAuthenticated(user, tokens);
         } else {
-          refreshToken();
+          await refreshToken();
         }
       } catch (error) {
         console.error('Failed to initialize auth from localStorage:', error);
         clearAuth();
       }
+    } else {
+      setLoading(false);
     }
   }
 

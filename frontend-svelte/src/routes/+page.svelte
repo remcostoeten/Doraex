@@ -45,11 +45,11 @@
     </p>
     
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <Button size="lg" class="bg-white text-black hover:bg-gray-200 font-medium">
+      <Button size="lg" class="bg-white text-black hover:bg-gray-200 font-medium" href="/auth-demo">
         Start Exploring
       </Button>
-      <Button variant="outline" size="lg" class="border-gray-700 text-white hover:bg-gray-900 font-medium">
-        View Documentation
+      <Button variant="outline" size="lg" class="border-gray-700 text-white hover:bg-gray-900 font-medium" href="/login">
+        Sign In
       </Button>
     </div>
   </div>

@@ -173,6 +173,10 @@ class UserRepository {
     }
   }
 
+  async updatePassword(id: string, newPasswordHash: string): Promise<boolean> {
+    return this.changePassword(id, newPasswordHash);
+  }
+
   async listUsers(limit: number = 50, offset: number = 0): Promise<TAuthUser[]> {
     try {
       const query = `

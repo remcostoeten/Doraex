@@ -96,7 +96,7 @@
         }
       }
 
-      const response = await fetch('http://localhost:3002/api/connections/test', {
+      const response = await fetch('http://localhost:3002/api/test-connection', {
         method: 'POST',
         headers,
         body: JSON.stringify(testData)

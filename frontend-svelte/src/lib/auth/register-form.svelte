@@ -53,7 +53,20 @@
   async function handleSubmit() {
     if (!validateForm()) return;
     
-    await authStore.register(formData);
+    const result = await authStore.register(formData);
+    
+    if (result.success) {
+      // Show success feedback and clear form
+      formData = {
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      };
+      formErrors = {};
+      // The RouteGuard will automatically redirect since auth state changed
+    }
+    // Error handling is done by the auth store and displayed via authState.error
   }
 
   function clearErrors() {

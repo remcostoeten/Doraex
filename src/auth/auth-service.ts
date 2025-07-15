@@ -209,6 +209,93 @@ class AuthService {
     }
   }
 
+  generatePasswordResetToken(email: string): string {
+    const resetPayload = {
+      email,
+      type: 'password_reset',
+      timestamp: Date.now()
+    };
+
+    return jwt.sign(resetPayload, this.jwtSecret, {
+      expiresIn: '1h',
+      issuer: 'db-explorer',
+      audience: 'db-explorer-users'
+    });
+  }
+
+  verifyPasswordResetToken(token: string): { email: string } | null {
+    try {
+      const decoded = jwt.verify(token, this.jwtSecret, {
+        issuer: 'db-explorer',
+        audience: 'db-explorer-users'
+      }) as any;
+      
+      if (decoded.type !== 'password_reset') {
+        return null;
+      }
+      
+      return { email: decoded.email };
+    } catch {
+      return null;
+    }
+  }
+
+  async requestPasswordReset(email: string): Promise<{ success: boolean; message?: string; error?: string; token?: string }> {
+    try {
+      const user = await this.userRepository.findByEmail(email);
+      
+      if (!user) {
+        // For security, return success even if user doesn't exist
+        return { success: true, message: 'If an account with that email exists, a password reset token has been generated.' };
+      }
+
+      const resetToken = this.generatePasswordResetToken(email);
+      
+      // In a real application, you would send this token via email
+      // For development, we'll return it in the response
+      return {
+        success: true,
+        message: 'Password reset token generated successfully.',
+        token: resetToken // Remove this in production
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Password reset request failed'
+      };
+    }
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+      const tokenPayload = this.verifyPasswordResetToken(token);
+      
+      if (!tokenPayload) {
+        return { success: false, error: 'Invalid or expired reset token' };
+      }
+
+      const user = await this.userRepository.findByEmail(tokenPayload.email);
+      
+      if (!user) {
+        return { success: false, error: 'User not found' };
+      }
+
+      const hashedPassword = await this.hashPassword(newPassword);
+      
+      await this.userRepository.updatePassword(user.id, hashedPassword);
+      
+      return {
+        success: true,
+        message: 'Password reset successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Password reset failed'
+      };
+    }
+  }
+
 }
 
 export { AuthService };

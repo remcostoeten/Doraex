@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { get } from 'svelte/store';
   import { authStore } from './stores/auth';
+  import { connectionsStore } from './stores/connections';
   import type { TDatabaseConnection } from './types';
 
   type TConnectionFormData = {
@@ -16,7 +17,7 @@
   };
 
   const dispatch = createEventDispatcher<{
-    submit: TConnectionFormData;
+    submit: TConnectionFormData & { connectionId?: string };
     close: void;
   }>();
 
@@ -65,15 +66,24 @@
     testResult = null;
 
     try {
-      const testConfig = useConnectionString 
-        ? { url: formData.url }
-        : {
-            host: formData.host,
-            port: formData.port,
-            database: formData.database,
-            user: formData.username,
-            password: formData.password
-          };
+      let testConfig: any;
+      let type: string;
+      
+      if (formData.type === 'sqlite') {
+        testConfig = { path: formData.database };
+        type = 'sqlite';
+      } else {
+        testConfig = useConnectionString 
+          ? { url: formData.url }
+          : {
+              host: formData.host,
+              port: formData.port,
+              database: formData.database,
+              user: formData.username,
+              password: formData.password
+            };
+        type = 'postgres';
+      }
 
       const auth = get(authStore);
       const headers: Record<string, string> = {
@@ -88,7 +98,7 @@
         method: 'POST',
         headers,
         body: JSON.stringify({
-          type: 'postgres',
+          type,
           config: testConfig
         })
       });
@@ -111,6 +121,25 @@
       return;
     }
 
+    if (formData.type === 'sqlite') {
+      if (!formData.database.trim()) {
+        error = 'Database path is required';
+        return;
+      }
+      
+      // For SQLite, save to localStorage instead of sending to server
+      const connectionId = connectionsStore.addConnection({
+        name: formData.name,
+        type: 'sqlite',
+        path: formData.database
+      });
+      
+      // Still dispatch to notify parent component
+      dispatch('submit', { ...formData, connectionId });
+      return;
+    }
+
+    // For PostgreSQL connections
     if (useConnectionString) {
       if (!formData.url.trim()) {
         error = 'Connection URL is required';
