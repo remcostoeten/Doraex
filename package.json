@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "bun run --hot src/server.ts",
     "dev:all": "concurrently \"bun run dev\" \"cd frontend-svelte && npm run dev\"",
-    "build": "bun build src/server.ts --outdir=dist",
+    "build": "bun build src/server.ts --outdir=dist --target=bun",
     "start": "bun run dist/server.js",
     "build:frontend": "cd frontend-svelte && npm run build",
     "dev:frontend": "cd frontend-svelte && npm run dev"
